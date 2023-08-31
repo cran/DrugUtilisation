@@ -1,7 +1,7 @@
 Package: DrugUtilisation
 Title: Summarise Patient-Level Drug Utilisation in Data Mapped to the
         OMOP Common Data Model
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
     person(
         "Marti", "Catala", email = "marti.catalasabate@ndorms.ox.ac.uk", 
@@ -35,7 +35,8 @@ License: Apache License (>= 2)
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Suggests: covr, testthat (>= 3.1.5), odbc, here, RPostgres, duckdb,
-        CodelistGenerator
+        CodelistGenerator, knitr, PaRe, rmarkdown, DT, magick,
+        DiagrammeRsvg, ggplot2, cowplot, plotly
 Config/testthat/edition: 3
 Imports: CDMConnector (>= 1.0.0), checkmate, DBI, dbplyr, dplyr, glue,
         lubridate, tidyr, rlang, RJSONIO, cli, PatientProfiles (>=
@@ -43,8 +44,9 @@ Imports: CDMConnector (>= 1.0.0), checkmate, DBI, dbplyr, dplyr, glue,
 Depends: R (>= 2.10)
 LazyData: true
 URL: https://darwin-eu-dev.github.io/DrugUtilisation/
+VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-08-09 15:46:59 UTC; martics
+Packaged: 2023-08-31 14:24:01 UTC; martics
 Author: Marti Catala [aut, cre] (<https://orcid.org/0000-0003-3308-9905>),
   Mike Du [aut] (<https://orcid.org/0000-0002-9517-8834>),
   Yuchen Guo [aut] (<https://orcid.org/0000-0002-0847-4855>),
@@ -53,4 +55,4 @@ Author: Marti Catala [aut, cre] (<https://orcid.org/0000-0003-3308-9905>),
   Xintong Li [ctb] (<https://orcid.org/0000-0002-6872-5804>)
 Maintainer: Marti Catala <marti.catalasabate@ndorms.ox.ac.uk>
 Repository: CRAN
-Date/Publication: 2023-08-09 16:10:02 UTC
+Date/Publication: 2023-08-31 14:40:02 UTC

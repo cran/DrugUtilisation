@@ -52,9 +52,9 @@
 #'
 #' @examples
 #' \donttest{
-#' #' library(DrugUtilisation)
 #' library(CodelistGenerator)
 #' library(CDMConnector)
+#' library(DrugUtilisation)
 #'
 #' cdm <- mockDrugUtilisation()
 #'
@@ -210,7 +210,11 @@ generateDrugUtilisationCohortSet <- function(cdm,
     cohortSetRef = cohortSetRef,
     cohortAttritionRef = cohortAttritionRef,
     cohortCountRef = cohortCountRef
+
   )
+
+  #add cdm_reference as attribute
+  attr(cdm[[name]], "cdm_reference") <- cdm
 
   return(cdm)
 }
