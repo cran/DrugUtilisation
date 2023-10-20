@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Xintong Li" />
+
+
+<title>Use DrugUtilisation to create cohort</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Use DrugUtilisation to create cohort</h1>
+<h4 class="author">Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell,
+Edward Burn, Xintong Li</h4>
+
+
+
+<div id="create-mock-data-first" class="section level1">
+<h1>Create mock data first</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DrugUtilisation)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CodelistGenerator)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CDMConnector)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="st">&quot;:memory:&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>connectionDetails <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">con =</span> con,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">writeSchema =</span> <span class="st">&quot;main&quot;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cdmPrefix =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">writePrefix =</span> <span class="cn">NULL</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockDrugUtilisation</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">connectionDetails =</span> connectionDetails,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">numberIndividual =</span> <span class="dv">100</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="get-concept-code-for-cohort-generation" class="section level1">
+<h1>Get concept code for cohort generation</h1>
+<p>To generate a cohort, we will need a concept list, this can be
+obtained through different ways.</p>
+<ol style="list-style-type: decimal">
+<li>Get from json file.</li>
+<li>Use concept code directly.</li>
+<li>Get ingredient</li>
+<li>Get ATC code</li>
+</ol>
+<p>To get it from json file, both function readConceptList() and
+codesFromConceptSet() can be used.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get concept from json file using readConceptList from this package or CodelistGenerator</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>conceptSet_json_1 <span class="ot">&lt;-</span> <span class="fu">readConceptList</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;inst/Concept&quot;</span>), cdm)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>conceptSet_json_2 <span class="ot">&lt;-</span> <span class="fu">codesFromConceptSet</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;inst/Concept&quot;</span>), cdm)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>conceptSet_json_1</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $asthma</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 317009</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>conceptSet_json_2</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $asthma</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 317009</span></span></code></pre></div>
+<p>Or a list can be created manually with the target codes:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get concept using code directly</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>conceptSet_code <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">asthma =</span> <span class="dv">317009</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>conceptSet_code</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $asthma</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 317009</span></span></code></pre></div>
+<p>If there is a certain ingredient of interest, code can also be
+obtained by getDrugIngredientCodes() from CodelistGenerator.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get concept by ingredient</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>conceptSet_ingredient <span class="ot">&lt;-</span> <span class="fu">getDrugIngredientCodes</span>(cdm, <span class="at">name =</span> <span class="st">&quot;simvastatin&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>conceptSet_ingredient</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $simvastatin</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1539403 1539462 1539463</span></span></code></pre></div>
+<p>ATC code can also be obtained, using getATCCodes() from
+CodelistGenerator.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get concept from ATC codes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>conceptSet_ATC <span class="ot">&lt;-</span> <span class="fu">getATCCodes</span>(cdm, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">level =</span> <span class="st">&quot;ATC 1st&quot;</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">name =</span> <span class="st">&quot;ALIMENTARY TRACT AND METABOLISM&quot;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>conceptSet_ATC</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $alimentary_tract_and_metabolism</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 35897399</span></span></code></pre></div>
+</div>
+<div id="create-cohort" class="section level1">
+<h1>Create cohort</h1>
+<p>Now having the conceptSet, we can proceed to generate cohort. There
+are two functions in this package to generate cohort:</p>
+<ol style="list-style-type: decimal">
+<li>generateConceptCohortSet: to generate a cohort for a certain list of
+concepts, which does not have to be drug. This function is exported from
+CDMConnector</li>
+<li>generateDrugUtilisationCohortSet: to generate a cohort of the drug
+use</li>
+</ol>
+<div id="generateconceptcohortset" class="section level2">
+<h2>generateConceptCohortSet()</h2>
+<p>First, let’s use generateConceptCohortSet to get the asthma cohort
+using the <em>conceptSet_code</em>, it will also give the same output if
+changed to <em>conceptSet_json_1</em> or <em>conceptSet_json_2</em>, as
+they are using the same concept code.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cdm1 <span class="ot">&lt;-</span> <span class="fu">generateConceptCohortSet</span>(cdm,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_code,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;asthma_1&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="st">&quot;observation_period_end_date&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">requiredObservation =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>cdm1<span class="sc">$</span>asthma_1</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;main.asthma_1&gt; [?? x 4]</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v0.9.1 [martics@Windows 10 x64:R 4.2.3/:memory:]</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1                    1         12 2019-03-06        2022-03-30     </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2                    1         36 2013-05-27        2022-12-19     </span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3                    1         16 2019-04-02        2020-08-17     </span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4                    1         92 2012-12-12        2013-05-15     </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5                    1         58 2005-03-29        2012-07-14     </span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6                    1         34 2008-12-23        2016-12-13     </span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7                    1         71 2017-09-02        2019-10-18     </span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8                    1          1 1996-12-22        2001-09-25     </span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9                    1         97 1990-06-26        1993-01-20     </span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10                    1         57 2021-02-19        2021-03-10     </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<p>The count of the cohort can be assessed using cohortCount() from
+CDMConnector</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm1<span class="sc">$</span>asthma_1)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                    1             45              45</span></span></code></pre></div>
+<p>Cohort attrition can be assessed using cohortAttrition() from
+CDMConnector</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm1<span class="sc">$</span>asthma_1)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;           </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                    1             45              45         1 Qualifying init…</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;dbl&gt;, excluded_subjects &lt;dbl&gt;</span></span></code></pre></div>
+<p>The <em>end</em> parameter set how the cohort end date is defined.
+Now it is changed to event end date to demonstrate the difference from
+previous observation period end date. See that now the cohort_end_date
+is different:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cdm1 <span class="ot">&lt;-</span> <span class="fu">generateConceptCohortSet</span>(cdm,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_code,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;asthma_2&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="st">&quot;event_end_date&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">requiredObservation =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>cdm1<span class="sc">$</span>asthma_2</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;main.asthma_2&gt; [?? x 4]</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v0.9.1 [martics@Windows 10 x64:R 4.2.3/:memory:]</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1                    1          1 1996-12-22        1998-03-13     </span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2                    1         71 2017-09-02        2017-10-31     </span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3                    1         57 2021-02-19        2021-02-27     </span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4                    1         10 2021-08-16        2021-12-14     </span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5                    1         18 2001-01-11        2004-06-05     </span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6                    1         49 2017-10-22        2018-03-31     </span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7                    1         93 2015-05-31        2016-04-07     </span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8                    1         97 1990-06-26        1990-10-19     </span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9                    1          2 2018-10-31        2018-11-15     </span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10                    1         59 2020-11-09        2021-01-27     </span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<p>The <em>requiredObservation</em> parameter is a numeric vector of
+length 2, that defines the number of days of required observation time
+prior to index and post index for an event to be included in the cohort.
+Let’s check it now to see how reducing required observation affect the
+<em>asthma_1</em> cohort.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cdm1 <span class="ot">&lt;-</span> <span class="fu">generateConceptCohortSet</span>(cdm,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_code,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;asthma_3&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="st">&quot;observation_period_end_date&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">requiredObservation =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>cdm1<span class="sc">$</span>asthma_3</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;main.asthma_3&gt; [?? x 4]</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v0.9.1 [martics@Windows 10 x64:R 4.2.3/:memory:]</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1                    1         10 2021-08-16        2022-03-30     </span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2                    1         18 2001-01-11        2004-09-26     </span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3                    1         49 2017-10-22        2018-09-30     </span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4                    1         93 2015-05-31        2016-08-13     </span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5                    1          1 1996-12-22        2001-09-25     </span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6                    1         71 2017-09-02        2019-10-18     </span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7                    1         57 2021-02-19        2021-03-10     </span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8                    1         97 1990-06-26        1993-01-20     </span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9                    1         58 2005-03-29        2012-07-14     </span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10                    1         34 2008-12-23        2016-12-13     </span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm1<span class="sc">$</span>asthma_3)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                    1             48              48</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm1<span class="sc">$</span>asthma_3)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;           </span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                    1             48              48         1 Qualifying init…</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;dbl&gt;, excluded_subjects &lt;dbl&gt;</span></span></code></pre></div>
+</div>
+<div id="generatedrugutilisationcohortset" class="section level2">
+<h2>generateDrugUtilisationCohortSet()</h2>
+<p>Now let’s try function
+DrugUtilisation::generateDrugUtilisationCohortSet() to get the drug
+cohort for ingredient simvastatin. This function has a lot more options
+you can set. We first use default settings:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cdm2 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_alleras&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>cdm2<span class="sc">$</span>dus_alleras</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;main.dus_alleras&gt; [?? x 4]</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v0.9.1 [martics@Windows 10 x64:R 4.2.3/:memory:]</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;dbl&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1                    1         57 2020-09-14        2020-11-26     </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2                    1         89 2018-08-26        2018-11-02     </span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3                    1         29 2020-10-11        2021-02-07     </span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4                    1         27 2019-02-26        2020-06-10     </span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5                    1         57 2020-06-19        2020-08-21     </span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6                    1         77 1966-12-10        1967-02-03     </span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7                    1         80 2022-08-31        2022-09-07     </span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8                    1         84 2010-08-15        2017-05-13     </span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9                    1         90 2001-06-18        2005-07-05     </span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10                    1         70 2019-12-08        2021-01-24     </span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm2<span class="sc">$</span>dus_alleras)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                    1             53              48</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm2<span class="sc">$</span>dus_alleras) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             53 Join eras                                   5                 0</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             53 prior use wahout of 0 days                  0                 0</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             53 at least 0 prior observation                0                 0</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             53 cohort_start_date &gt;= NA                     0                 0</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7             53 cohort_end_date &lt;= NA                       0                 0</span></span></code></pre></div>
+<div id="imputeduration-and-durationrange" class="section level3">
+<h3>imputeDuration and durationRange</h3>
+<p>The parameter <em>durationRange</em> specifies the range within which
+the duration must fall, where duration = end date - start date + 1.
+Default as c(1, Inf). It should be a numeric vector of length two, with
+no NAs and the first value should be equal or smaller than the second
+one. Duration values outside of <em>durationRange</em> will be imputed
+using <em>imputeDuration</em>. It can ne set as: “none”, “median”,
+“mean”, “mode” or an integer (count).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cdm3 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_step2_0_inf&quot;</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>) <span class="co"># default as c(1, Inf)</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm3<span class="sc">$</span>dus_step2_0_inf) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             53 Join eras                                   5                 0</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             53 prior use wahout of 0 days                  0                 0</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             53 at least 0 prior observation                0                 0</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             53 cohort_start_date &gt;= NA                     0                 0</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7             53 cohort_end_date &lt;= NA                       0                 0</span></span></code></pre></div>
+</div>
+<div id="gapera" class="section level3">
+<h3>gapEra</h3>
+<p>The <em>gapEra</em> parameter defines the number of days between two
+continuous drug exposures to be considered as a same era. Now let’s
+change it from 0 to a larger number. From the <em>dus_step3_alleras</em>
+cohort attrition, we can see that when joining era at <strong>STEP
+3</strong>, it resulted in less records, compared to the
+<em>dus_step2_0_inf</em> cohort, as exposures with less than 30 days
+gaps are joined.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cdm4 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_step3_alleras&quot;</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">30</span> <span class="co"># default as 0</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm4<span class="sc">$</span>dus_step3_alleras) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             51 cohort_end_date &lt;= NA                       0                 0</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             51 Join eras                                   7                 0</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             51 prior use wahout of 0 days                  0                 0</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             51 at least 0 prior observation                0                 0</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7             51 cohort_start_date &gt;= NA                     0                 0</span></span></code></pre></div>
+</div>
+<div id="priorusewashout" class="section level3">
+<h3>priorUseWashout</h3>
+<p>The <em>priorUseWashout</em> parameter specifiesthe number of prior
+days without exposure (often termed a ‘washout’) that are required. By
+default, it is set to NULL, meaning no washout period is necessary. In
+the example provided, we observe a reduction in the number of records in
+<strong>STEP 4</strong> for cohort <em>dus_alleras_step4</em> due to the
+washout period required, compared to the <em>dus_step3_alleras</em>
+cohort.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cdm5 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_alleras_step4&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">30</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorUseWashout =</span> <span class="dv">30</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm5<span class="sc">$</span>dus_alleras_step4) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             51 cohort_end_date &lt;= NA                       0                 0</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             51 Join eras                                   7                 0</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             51 prior use wahout of 30 days                 0                 0</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             51 at least 0 prior observation                0                 0</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7             51 cohort_start_date &gt;= NA                     0                 0</span></span></code></pre></div>
+</div>
+<div id="priorobservation" class="section level3">
+<h3>priorObservation</h3>
+<p>The parameter <em>priorObservation</em> defines the minimum number of
+days of prior observation necessary for drug eras to be taken into
+account. If set to NULL, the drug eras are not required to fall within
+the observation_period. In this example, there is a noticeable decrease
+in the number of records for <em>dus_alleras_step5</em> cohort in
+<strong>STEP 5</strong> when compared to the <em>dus_alleras_step4</em>
+cohort.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cdm6 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_alleras_step5&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">30</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorUseWashout =</span> <span class="dv">30</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorObservation =</span> <span class="dv">30</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm6<span class="sc">$</span>dus_alleras_step5) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             51 Join eras                                   7                 0</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             51 prior use wahout of 30 days                 0                 0</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             48 at least 30 prior observati…                3                 2</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             48 cohort_start_date &gt;= NA                     0                 0</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7             48 cohort_end_date &lt;= NA                       0                 0</span></span></code></pre></div>
+</div>
+<div id="cohortdaterange" class="section level3">
+<h3>cohortDateRange</h3>
+<p>The <em>cohortDateRange</em> parameter defines the range for the
+cohort_start_date and cohort_end_date. In the following example, one can
+observe a reduction in <strong>STEP 6</strong> and <strong>STEP
+7</strong> due to the constraints imposed on the cohort start and end
+dates.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cdm7 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_alleras_step67&quot;</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">30</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorUseWashout =</span> <span class="dv">30</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorObservation =</span> <span class="dv">30</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortDateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;2010-01-01&quot;</span>, <span class="st">&quot;2011-01-01&quot;</span>)),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">limi =</span> <span class="st">&quot;All&quot;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm7<span class="sc">$</span>dus_alleras_step67) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             51 Join eras                                   7                 0</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             51 prior use wahout of 30 days                 0                 0</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             48 at least 30 prior observati…                3                 2</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             34 cohort_start_date &gt;= 2010-0…               14                14</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7              4 cohort_end_date &lt;= 2011-01-…               30                28</span></span></code></pre></div>
+</div>
+<div id="limit-first-era-that-fulfills-the-criteria" class="section level3">
+<h3>limit: First era that fulfills the criteria</h3>
+<p>Change the <em>limit</em> parameter from <em>All</em> to
+<em>First</em> and observe how it impacts the attrition of the
+<em>dus_step8_firstera cohort</em> in comparison to the
+<em>dus_alleras_step67</em> cohort. The number of records decreased at
+<strong>STEP 8</strong> because of the <em>First</em> limit. It gets the
+first record that fulfills all criteria.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>cdm8 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_step8_firstera&quot;</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">30</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorUseWashout =</span> <span class="dv">30</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorObservation =</span> <span class="dv">30</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortDateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;2010-01-01&quot;</span>, <span class="st">&quot;2011-01-01&quot;</span>)),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">limit =</span> <span class="st">&quot;First&quot;</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortAttrition</span>(cdm8<span class="sc">$</span>dus_step8_firstera) <span class="sc">%&gt;%</span> <span class="fu">select</span>(number_records, reason, excluded_records, excluded_subjects)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8 × 4</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   number_records reason                       excluded_records excluded_subjects</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            &lt;dbl&gt; &lt;chr&gt;                                   &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1             58 Qualifying initial records                  0                 0</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2             58 Duration imputation; affect…                0                 0</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3             51 Join eras                                   7                 0</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4             51 prior use wahout of 30 days                 0                 0</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5             48 at least 30 prior observati…                3                 2</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6             34 cohort_start_date &gt;= 2010-0…               14                14</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7              4 cohort_end_date &lt;= 2011-01-…               30                28</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8              4 Limit to first era                          0                 0</span></span></code></pre></div>
+</div>
+<div id="limit-first-ever-era" class="section level3">
+<h3>limit: First ever era</h3>
+<p>The parameter <em>limit</em> only allows <em>All</em> and
+<em>First</em>. The <em>First</em> value represents the first era that
+meets the criteria set by the parameters prior to <em>limit</em>.
+However, if the goal is to get the first-ever era, this can be achieved
+using this function too. Setting the following parameter will result in
+the first ever drug era:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cdm8 <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(cdm,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;dus_step8_firstever&quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conceptSet =</span> conceptSet_ingredient,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">imputeDuration =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">durationRange =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">Inf</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gapEra =</span> <span class="dv">0</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorUseWashout =</span> <span class="cn">Inf</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">priorObservation =</span> <span class="dv">0</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortDateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>)),</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">limit =</span> <span class="st">&quot;First&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Constructing concept sets and generating various cohorts are the
+initial steps in conducting a drug utilization study. For further
+guidance on using getting more information like characteristics from
+these cohorts, please refer to the other vignettes.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

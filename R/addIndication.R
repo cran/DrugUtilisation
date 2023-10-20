@@ -42,12 +42,12 @@
 #' acetaminophen <- getDrugIngredientCodes(cdm, "acetaminophen")
 #' cdm <- generateDrugUtilisationCohortSet(cdm, "drug_cohort", acetaminophen)
 #'
-#' cdm$drug_cohort %>%
+#' cdm[["drug_cohort"]] %>%
 #'   addIndication(cdm, "indication_cohorts", indicationGap = c(0, 30, 365))
 #' }
 #'
 addIndication <- function(x,
-                          cdm,
+                          cdm = attr(x, "cdm_reference"),
                           indicationCohortName,
                           indicationGap = 0,
                           unknownIndicationTable = NULL,
@@ -216,7 +216,7 @@ addNoneIndication <- function(x, gap) {
 #' library(DrugUtilisation)
 #'
 #' cdm <- mockDrugUtilisation()
-#' cdm$cohort1 <- cdm$cohort1 %>%
+#' cdm[["cohort1"]] <- cdm[["cohort1"]] %>%
 #'   addIndication(cdm, "cohort2") %>%
 #'   indicationToStrata()
 #' }
