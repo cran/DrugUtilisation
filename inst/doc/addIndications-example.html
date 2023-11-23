@@ -11,7 +11,7 @@
 
 <meta name="author" content="Martí Català, Mike Du, Yuchen Guo, Kim López-Güell, and Edward Burn" />
 
-<meta name="date" content="2023-10-20" />
+<meta name="date" content="2023-11-23" />
 
 <title>Add indications to Drug Utilisation Cohort</title>
 
@@ -354,7 +354,7 @@ display: none;
 Cohort</h1>
 <h4 class="author">Martí Català, Mike Du, Yuchen Guo, Kim López-Güell,
 and Edward Burn</h4>
-<h4 class="date">2023-10-20</h4>
+<h4 class="date">2023-11-23</h4>
 
 </div>
 
@@ -405,8 +405,8 @@ generate a concept list associated with Acetaminophen.</p>
 <pre class="r"><code># using CodelistGenerator
 conceptList &lt;- CodelistGenerator::getDrugIngredientCodes(cdm, &quot;acetaminophen&quot;)
 conceptList
-#&gt; $acetaminophen
-#&gt; [1]  1125315  1127078  1127433 40229134 40231925 40162522 19133768</code></pre>
+#&gt; $`Ingredient: Acetaminophen (1125315)`
+#&gt; [1] 19133768 40231925 40229134 40162522  1127078  1125315  1127433</code></pre>
 <p>Next, we can create a drug utilization cohort by using the
 conceptList with the “generateDrugUtilisationCohortSet” function. For a
 better understanding of the arguments and functionaities of
@@ -463,27 +463,27 @@ cdm[[&quot;acetaminophen_users&quot;]] %&gt;%
     indicationGap =  c(0, 30, 365),
     unknownIndicationTable =  c(&quot;condition_occurrence&quot;)
   )
-#&gt; # Source:   table&lt;dbplyr_195&gt; [?? x 16]
-#&gt; # Database: DuckDB v0.9.1 [martics@Windows 10 x64:R 4.2.3/C:\Users\martics\AppData\Local\Temp\RtmpyU5BPt\file7238721a2d2b.duckdb]
+#&gt; # Source:   table&lt;dbplyr_036&gt; [?? x 16]
+#&gt; # Database: DuckDB 0.7.1 [martics@Windows 10 x64:R 4.2.1/C:\Users\martics\AppData\Local\Temp\RtmpKkyqed\file69501a08427f.duckdb]
 #&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date
-#&gt;                   &lt;int&gt;      &lt;dbl&gt; &lt;date&gt;            &lt;date&gt;         
-#&gt;  1                    1          7 2001-07-18        2001-08-01     
-#&gt;  2                    1         57 1986-07-31        1986-08-14     
-#&gt;  3                    1         80 1953-02-24        1953-03-10     
-#&gt;  4                    1         80 2008-06-03        2008-06-17     
-#&gt;  5                    1         84 1979-09-25        1979-10-09     
-#&gt;  6                    1         84 1996-11-08        1996-11-22     
-#&gt;  7                    1         86 1952-07-05        1952-07-19     
-#&gt;  8                    1         86 1965-11-10        1965-11-24     
-#&gt;  9                    1         86 1977-12-14        1977-12-28     
-#&gt; 10                    1        144 1980-10-21        1980-11-04     
+#&gt;                   &lt;dbl&gt;      &lt;dbl&gt; &lt;date&gt;            &lt;date&gt;         
+#&gt;  1                    1         61 1983-12-03        1984-01-07     
+#&gt;  2                    1        156 1982-07-05        1982-07-12     
+#&gt;  3                    1        156 2005-06-23        2005-06-30     
+#&gt;  4                    1        160 1973-02-10        1973-02-17     
+#&gt;  5                    1        160 1976-02-09        1976-03-08     
+#&gt;  6                    1        160 1980-01-14        1980-01-28     
+#&gt;  7                    1        160 2004-10-01        2004-10-08     
+#&gt;  8                    1        160 2016-08-05        2016-09-04     
+#&gt;  9                    1        160 2019-04-02        2019-04-11     
+#&gt; 10                    1        163 1975-04-26        1975-07-26     
 #&gt; # ℹ more rows
-#&gt; # ℹ 12 more variables: indication_gap_0_bronchitis &lt;dbl&gt;,
-#&gt; #   indication_gap_0_sinusitis &lt;dbl&gt;, indication_gap_0_none &lt;dbl&gt;,
-#&gt; #   indication_gap_30_sinusitis &lt;dbl&gt;, indication_gap_30_bronchitis &lt;dbl&gt;,
-#&gt; #   indication_gap_30_none &lt;dbl&gt;, indication_gap_365_bronchitis &lt;dbl&gt;,
-#&gt; #   indication_gap_365_sinusitis &lt;dbl&gt;, indication_gap_365_none &lt;dbl&gt;,
-#&gt; #   indication_gap_0_unknown &lt;dbl&gt;, indication_gap_30_unknown &lt;dbl&gt;, …</code></pre>
+#&gt; # ℹ 12 more variables: indication_gap_0_sinusitis &lt;dbl&gt;,
+#&gt; #   indication_gap_0_bronchitis &lt;dbl&gt;, indication_gap_0_none &lt;dbl&gt;,
+#&gt; #   indication_gap_0_unknown &lt;dbl&gt;, indication_gap_30_sinusitis &lt;dbl&gt;,
+#&gt; #   indication_gap_30_bronchitis &lt;dbl&gt;, indication_gap_30_none &lt;dbl&gt;,
+#&gt; #   indication_gap_30_unknown &lt;dbl&gt;, indication_gap_365_sinusitis &lt;dbl&gt;,
+#&gt; #   indication_gap_365_bronchitis &lt;dbl&gt;, indication_gap_365_none &lt;dbl&gt;, …</code></pre>
 </div>
 <div id="summarise-indications" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> Summarise
@@ -501,18 +501,18 @@ cdm[[&quot;acetaminophen_users&quot;]] %&gt;%
   summariseIndication(cdm) %&gt;%
   select(&quot;variable&quot;, &quot;estimate_type&quot;, &quot;estimate&quot;)
 #&gt; # A tibble: 26 × 3
-#&gt;    variable                        estimate_type estimate         
-#&gt;    &lt;chr&gt;                           &lt;chr&gt;         &lt;chr&gt;            
-#&gt;  1 number subjects                 count         2679             
-#&gt;  2 number records                  count         13860            
-#&gt;  3 Indication on index date        count         2518             
-#&gt;  4 Indication on index date        percentage    18.1673881673882 
-#&gt;  5 Indication on index date        count         &lt;5               
-#&gt;  6 Indication on index date        percentage    &lt;NA&gt;             
-#&gt;  7 Indication on index date        count         163              
-#&gt;  8 Indication on index date        percentage    1.17604617604618 
-#&gt;  9 Indication during prior 30 days count         21               
-#&gt; 10 Indication during prior 30 days percentage    0.151515151515152
+#&gt;    variable                 estimate_type estimate        
+#&gt;    &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;           
+#&gt;  1 number subjects          count         2679            
+#&gt;  2 number records           count         13860           
+#&gt;  3 Indication on index date count         &lt;5              
+#&gt;  4 Indication on index date percentage    &lt;NA&gt;            
+#&gt;  5 Indication on index date count         2518            
+#&gt;  6 Indication on index date percentage    18.1673881673882
+#&gt;  7 Indication on index date count         163             
+#&gt;  8 Indication on index date percentage    1.17604617604618
+#&gt;  9 Indication on index date count         11178           
+#&gt; 10 Indication on index date percentage    80.6493506493507
 #&gt; # ℹ 16 more rows</code></pre>
 <p>You can also summarize the indications by using the strata argument
 in the summariseIndication function. In the example below, it is
@@ -535,10 +535,10 @@ cdm[[&quot;acetaminophen_users&quot;]] %&gt;%
 #&gt;    &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;      
 #&gt;  1 number subjects          count         2679             Overall    
 #&gt;  2 number records           count         13860            Overall    
-#&gt;  3 Indication on index date count         2518             Overall    
-#&gt;  4 Indication on index date percentage    18.1673881673882 Overall    
-#&gt;  5 Indication on index date count         &lt;5               Overall    
-#&gt;  6 Indication on index date percentage    &lt;NA&gt;             Overall    
+#&gt;  3 Indication on index date count         &lt;5               Overall    
+#&gt;  4 Indication on index date percentage    &lt;NA&gt;             Overall    
+#&gt;  5 Indication on index date count         2518             Overall    
+#&gt;  6 Indication on index date percentage    18.1673881673882 Overall    
 #&gt;  7 Indication on index date count         163              Overall    
 #&gt;  8 Indication on index date percentage    1.17604617604618 Overall    
 #&gt;  9 Indication on index date count         11178            Overall    

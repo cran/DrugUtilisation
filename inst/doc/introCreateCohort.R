@@ -47,70 +47,70 @@ conceptSet_ATC <- getATCCodes(cdm,
 conceptSet_ATC
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm1 <- generateConceptCohortSet(cdm,
+cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_1",
   end = "observation_period_end_date",
   requiredObservation = c(10, 10),
   overwrite = TRUE
 )
-cdm1$asthma_1
+cdm$asthma_1
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cohortCount(cdm1$asthma_1)
+cohortCount(cdm$asthma_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cohortAttrition(cdm1$asthma_1)
+cohortAttrition(cdm$asthma_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm1 <- generateConceptCohortSet(cdm,
+cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_2",
   end = "event_end_date",
   requiredObservation = c(10, 10),
   overwrite = TRUE
 )
-cdm1$asthma_2
+cdm$asthma_2
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm1 <- generateConceptCohortSet(cdm,
+cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_3",
   end = "observation_period_end_date",
   requiredObservation = c(1, 1),
   overwrite = TRUE
 )
-cdm1$asthma_3
+cdm$asthma_3
 
-cohortCount(cdm1$asthma_3)
+cohortCount(cdm$asthma_3)
 
-cohortAttrition(cdm1$asthma_3)
+cohortAttrition(cdm$asthma_3)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm2 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_alleras",
   conceptSet = conceptSet_ingredient
 )
-cdm2$dus_alleras
+cdm$dus_alleras
 
-cohortCount(cdm2$dus_alleras)
+cohortCount(cdm$dus_alleras)
 
-cohortAttrition(cdm2$dus_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm3 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_step2_0_inf",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf) # default as c(1, Inf)
 )
 
-cohortAttrition(cdm3$dus_step2_0_inf) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_step2_0_inf) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm4 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_step3_alleras",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
@@ -118,11 +118,11 @@ cdm4 <- generateDrugUtilisationCohortSet(cdm,
   gapEra = 30 # default as 0
 )
 
-cohortAttrition(cdm4$dus_step3_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_step3_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm5 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_alleras_step4",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
@@ -131,11 +131,11 @@ cdm5 <- generateDrugUtilisationCohortSet(cdm,
   priorUseWashout = 30
 )
 
-cohortAttrition(cdm5$dus_alleras_step4) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_alleras_step4) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm6 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_alleras_step5",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
@@ -145,11 +145,11 @@ cdm6 <- generateDrugUtilisationCohortSet(cdm,
   priorObservation = 30
 )
 
-cohortAttrition(cdm6$dus_alleras_step5) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_alleras_step5) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm7 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_alleras_step67",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
@@ -161,10 +161,10 @@ cdm7 <- generateDrugUtilisationCohortSet(cdm,
   limi = "All"
 )
 
-cohortAttrition(cdm7$dus_alleras_step67) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_alleras_step67) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cdm8 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_step8_firstera",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
@@ -176,11 +176,11 @@ cdm8 <- generateDrugUtilisationCohortSet(cdm,
   limit = "First"
 )
 
-cohortAttrition(cdm8$dus_step8_firstera) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$dus_step8_firstera) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## -----------------------------------------------------------------------------
-cdm8 <- generateDrugUtilisationCohortSet(cdm,
+cdm <- generateDrugUtilisationCohortSet(cdm,
   name = "dus_step8_firstever",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",

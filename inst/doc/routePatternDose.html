@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Xintong Li" />
+
+
+<title>Guide on using DrugUtilisataion package to compute drug use related information</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Guide on using DrugUtilisataion package to
+compute drug use related information</h1>
+<h4 class="author">Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell,
+Edward Burn, Xintong Li</h4>
+
+
+
+<div id="adding-routes-with-addroute-function" class="section level2">
+<h2>Adding Routes with <code>addRoute</code> Function</h2>
+<p>To enrich your drug data, the DrugUtilisation package provides the
+<code>addRoute</code> function. This function utilizes an internal CSV
+file containing all possible routes for various drug dose forms
+supported by the package.</p>
+<p>The <code>addRoute</code> function is designed to seamlessly
+incorporate route information into your drug table for the supported
+dose forms. In the example below, a mock database is generated using the
+<code>mockDrugUtilisation</code> function, and the <code>addRoute</code>
+function is applied to demonstrate the process:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DrugUtilisation)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="st">&quot;:memory:&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>connectionDetails <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">con =</span> con,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">writeSchema =</span> <span class="st">&quot;main&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cdmPrefix =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">writePrefix =</span> <span class="cn">NULL</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockDrugUtilisation</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">connectionDetails =</span> connectionDetails,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">numberIndividual =</span> <span class="dv">100</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Add route information to the drug table</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">addRoute</span>(cdm<span class="sc">$</span>drug_exposure)</span></code></pre></div>
+<pre><code>## # Source:   SQL [?? x 8]
+## # Database: DuckDB 0.7.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
+##    drug_exposure_id person_id drug_concept_id drug_exposure_start_date
+##               &lt;int&gt;     &lt;int&gt;           &lt;dbl&gt; &lt;date&gt;                  
+##  1                2         1         1516980 2001-02-27              
+##  2                3         2         1516980 2018-03-08              
+##  3                4         2         1516978 2018-05-28              
+##  4                5         2         1516978 2018-06-14              
+##  5                6         2         1539463 2017-07-03              
+##  6                8         3        43135274 1996-09-13              
+##  7               11         4         1503328 2007-05-14              
+##  8               12         4         1125360 2004-12-26              
+##  9               13         5         1539463 1986-08-21              
+## 10               14         5         1503328 1979-06-27              
+## # ℹ more rows
+## # ℹ 4 more variables: drug_exposure_end_date &lt;date&gt;,
+## #   drug_type_concept_id &lt;dbl&gt;, quantity &lt;dbl&gt;, route &lt;chr&gt;</code></pre>
+</div>
+<div id="generating-patterns-with-patterntable-function" class="section level2">
+<h2>Generating Patterns with patternTable Function</h2>
+<p>The <code>patternTable</code> function in the DrugUtilisation package
+is a powerful tool for deriving patterns from a drug strength table.
+This function extracts distinct patterns, associating them with
+<code>pattern_id</code> and <code>formula_id</code>. The resulting
+tibble provides valuable insights into the data:</p>
+<ul>
+<li><code>number_concepts</code>: the count of distinct concepts in the
+patterns.</li>
+<li><code>number_ingredients</code>: the count of distinct ingredients
+involved.</li>
+<li><code>number_records</code>: the overall count of records in the
+patterns.</li>
+</ul>
+<p>Moreover, the tibble includes a column indicating potentially valid
+and invalid combinations.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patternTable</span>(cdm)</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 12
+##   pattern_id formula_name            validity number_concepts number_ingredients
+##        &lt;dbl&gt; &lt;chr&gt;                   &lt;chr&gt;              &lt;dbl&gt;              &lt;dbl&gt;
+## 1          9 fixed amount formulati… pattern…               7                  4
+## 2         18 concentration formulat… pattern…               1                  1
+## 3         24 concentration formulat… pattern…               1                  1
+## 4         40 concentration formulat… pattern…               1                  1
+## 5         NA &lt;NA&gt;                    no patt…               4                  4
+## # ℹ 7 more variables: number_records &lt;dbl&gt;, amount_numeric &lt;dbl&gt;,
+## #   amount_unit_concept_id &lt;dbl&gt;, numerator_numeric &lt;dbl&gt;,
+## #   numerator_unit_concept_id &lt;dbl&gt;, denominator_numeric &lt;dbl&gt;,
+## #   denominator_unit_concept_id &lt;dbl&gt;</code></pre>
+<p>For detailed information about the patterns, their associated
+formula, and combinations of <code>amount_unit</code>,
+<code>numerator_unit</code>, and <code>denominator_unit</code>, you can
+refer to the data:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>patternsWithFormula</span></code></pre></div>
+</div>
+<div id="get-daily-dose" class="section level2">
+<h2>Get daily dose</h2>
+<p>Now that we have all the patterns and formulas supported, the
+computation of daily doses can be performed using the
+<code>addDailyDose</code> function. This function will add to the data
+with additional columns, including those for quantity, daily dose, unit,
+and route.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addDailyDose</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  cdm<span class="sc">$</span>drug_exposure,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cdm =</span> cdm,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ingredientConceptId =</span> <span class="dv">1125315</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## # Source:   table&lt;dbplyr_229&gt; [?? x 9]
+## # Database: DuckDB 0.7.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
+##    drug_exposure_id person_id drug_concept_id drug_exposure_start_date
+##               &lt;int&gt;     &lt;int&gt;           &lt;dbl&gt; &lt;date&gt;                  
+##  1                8         3        43135274 1996-09-13              
+##  2               12         4         1125360 2004-12-26              
+##  3               17         7         1125360 1969-09-09              
+##  4               23         8         2905077 2019-09-14              
+##  5               24         9         1125360 2019-05-14              
+##  6               27         9        43135274 2016-03-17              
+##  7               34        12        43135274 2018-10-17              
+##  8               35        13        43135274 1981-07-11              
+##  9               40        14         1125360 1990-04-27              
+## 10               49        19         2905077 2022-02-12              
+## # ℹ more rows
+## # ℹ 5 more variables: drug_exposure_end_date &lt;date&gt;,
+## #   drug_type_concept_id &lt;dbl&gt;, quantity &lt;dbl&gt;, daily_dose &lt;dbl&gt;, unit &lt;chr&gt;</code></pre>
+<p>There is also a function, <code>dailyDoseCoverage</code>, to check
+the coverage of daily dose computation for chosen concept sets and
+ingredients.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>(<span class="fu">dailyDoseCoverage</span>(cdm, <span class="dv">1125315</span>))</span></code></pre></div>
+<pre><code>## # A tibble: 73 × 9
+##    group_name      group_level  strata_name strata_level variable variable_level
+##    &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;         
+##  1 ingredient_name acetaminoph… Overall     Overall      number … &lt;NA&gt;          
+##  2 ingredient_name acetaminoph… unit        milligram    number … &lt;NA&gt;          
+##  3 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  4 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  5 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  6 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  7 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  8 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+##  9 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+## 10 ingredient_name acetaminoph… unit        milligram    daily_d… &lt;NA&gt;          
+## # ℹ 63 more rows
+## # ℹ 3 more variables: variable_type &lt;chr&gt;, estimate_type &lt;chr&gt;, estimate &lt;chr&gt;</code></pre>
+</div>
+<div id="adding-drug-usage-details-to-a-cohort-with-adddruguse" class="section level2">
+<h2>Adding Drug Usage Details to a Cohort with
+<code>addDrugUse</code></h2>
+<p>Additional drug usage details, including duration, initial dose,
+cumulative dose, etc., can be incorporated into a cohort using the
+<code>addDrugUse</code> function.</p>
+<div id="parameters-in-adddruguse-function" class="section level3">
+<h3>Parameters in <code>addDrugUse</code> Function</h3>
+<div id="duration-parameter" class="section level4">
+<h4><code>duration</code> Parameter</h4>
+<p>The <code>duration</code> parameter is a boolean variable
+(<code>TRUE</code>/<code>FALSE</code>) determining whether to include
+the duration column. When set to <code>TRUE</code>, the duration is
+calculated as <code>cohort_end_date - cohort_start_date + 1</code>.
+Additionally, a column named <code>impute_duration_percentage</code> is
+added, reporting the percentage of imputed duration.</p>
+<p>To set the imputation method for duration, use the
+<code>imputeDuration</code> parameter, which can take values such as
+“none,” “median,” “mean,” or “mode.” Define the imputation range with
+the <code>durationRange</code> parameter, a numeric vector of length
+two, where the first value should be equal or smaller than the second
+one.</p>
+</div>
+<div id="quantity-parameter" class="section level4">
+<h4><code>quantity</code> Parameter</h4>
+<p>The <code>quantity</code> parameter, another boolean variable
+(<code>TRUE</code>/<code>FALSE</code>), controls the inclusion of
+quantity-related columns. If set to <code>TRUE</code>, columns for
+initial quantity and cumulative quantity are added.</p>
+</div>
+<div id="dose-parameter" class="section level4">
+<h4><code>dose</code> Parameter</h4>
+<p>The <code>dose</code> parameter, also a boolean variable
+(<code>TRUE</code>/<code>FALSE</code>), governs the addition of daily
+dose-related columns. When set to <code>TRUE</code>, columns for initial
+daily dose and cumulative daily dose are incorporated. Moreover, a
+column named <code>impute_daily_dose_percentage</code> is added,
+reporting the percentage of imputed daily dose.</p>
+<p>Similar to the duration imputation, use the
+<code>imputeDuration</code> parameter to set the method for imputing
+daily dose, with options like “none,” “median,” “mean,” or “mode.”
+Define the imputation range with the <code>dailyDoseRange</code>
+parameter, a numeric vector of length two.</p>
+<p>These parameters offer flexibility in customizing the drug usage
+details added to the cohort.</p>
+<p>An example is provided where these parameters are set to
+<code>TRUE</code>, utilizing the drug ingredient acetaminophen.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CodelistGenerator)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockDrugUtilisation</span>()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  cdm, <span class="st">&quot;dus_cohort&quot;</span>, <span class="fu">getDrugIngredientCodes</span>(cdm, <span class="st">&quot;acetaminophen&quot;</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>cdm[[<span class="st">&quot;dus_cohort&quot;</span>]] <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addDrugUse</span>(cdm,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">duration =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">quantity =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">dose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>             <span class="dv">1125315</span>)</span></code></pre></div>
+<pre><code>## # Source:   table&lt;dbplyr_270&gt; [?? x 13]
+## # Database: DuckDB 0.7.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
+##    cohort_definition_id subject_id cohort_start_date cohort_end_date duration
+##                   &lt;dbl&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;             &lt;dbl&gt;
+##  1                    1          2 2022-06-06        2022-06-07             2
+##  2                    1          7 2018-05-21        2018-07-20            61
+##  3                    1          5 2014-07-28        2019-11-20          1942
+##  4                    1          2 2022-05-24        2022-06-02            10
+##  5                    1          3 2009-04-18        2009-11-07           204
+##  6                    1          6 1991-01-28        1991-09-17           233
+##  7                    1          7 2016-02-01        2017-10-04           612
+##  8                    1          1 2021-02-25        2021-03-11            15
+##  9                    1          9 2022-09-11        2022-11-09            60
+## 10                    1          8 2012-02-15        2012-02-17             3
+## # ℹ more rows
+## # ℹ 8 more variables: number_exposures &lt;dbl&gt;, cumulative_quantity &lt;dbl&gt;,
+## #   initial_quantity &lt;dbl&gt;, impute_duration_percentage &lt;dbl&gt;,
+## #   number_eras &lt;dbl&gt;, impute_daily_dose_percentage &lt;dbl&gt;,
+## #   initial_daily_dose_milligram &lt;dbl&gt;, cumulative_dose_milligram &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div id="parameters-for-joining-exposures" class="section level3">
+<h3>Parameters for Joining Exposures</h3>
+<p>Finally, the way continuous exposures are joined can be configured
+using the following parameters:</p>
+<div id="gapera-this-parameter-sets-the-number-of-days-between-two-continuous-exposures-to-be-considered-in-the-same-era." class="section level4">
+<h4><code>gapEra</code>: This parameter sets the number of days between
+two continuous exposures to be considered in the same era.</h4>
+<pre><code>  If the previous exposure&#39;s end date minus the next exposure&#39;s start date is less than or equal to the specified `gapEra`, these two exposures will be joined.</code></pre>
+</div>
+<div id="erajoinmode-this-parameter-defines-how-two-different-continuous-exposures-are-joined-in-an-era.-there-are-four-options" class="section level4">
+<h4><code>eraJoinMode</code>: This parameter defines how two different
+continuous exposures are joined in an era. There are four options:</h4>
+<pre><code>- &quot;zero&quot;: Exposures are joined, considering that the period between both continuous exposures means the subject is treated with a daily dose of zero. The time between both exposures contributes to the total exposed time.
+- &quot;join&quot;: Exposures are joined, considering that the period between both continuous exposures means the subject is treated with a daily dose of zero. The time between both exposures does not contribute to the total exposed time.
+- &quot;previous&quot;: Exposures are joined, considering that the period between both continuous exposures means the subject is treated with the daily dose of the previous subexposure. The time between both exposures contributes to the total exposed time.
+- &quot;subsequent&quot;: Exposures are joined, considering that the period between both continuous exposures means the subject is treated with the daily dose of the subsequent subexposure. The time between both exposures contributes to the total exposed time.</code></pre>
+</div>
+<div id="overlapmode-this-parameter-defines-how-the-overlapping-between-two-exposures-that-do-not-start-on-the-same-day-is-resolved-inside-a-subexposure.-there-are-five-possible-options" class="section level4">
+<h4><code>overlapMode</code>: This parameter defines how the overlapping
+between two exposures that do not start on the same day is resolved
+inside a subexposure. There are five possible options:</h4>
+<pre><code>- &quot;previous&quot;: The considered daily dose is that of the earliest exposure.
+- &quot;subsequent&quot;: The considered daily dose is that of the new exposure that starts in that subexposure.
+- &quot;minimum&quot;: The considered daily dose is the minimum of all the exposures in the subexposure.
+- &quot;maximum&quot;: The considered daily dose is the maximum of all the exposures in the subexposure.
+- &quot;sum&quot;: The considered daily dose is the sum of all the exposures present in the subexposure.</code></pre>
+</div>
+<div id="sameindexmode-this-parameter-defines-how-the-overlapping-between-two-exposures-that-start-on-the-same-day-is-resolved-inside-a-subexposure.-there-are-three-possible-options" class="section level4">
+<h4><code>sameIndexMode</code>: This parameter defines how the
+overlapping between two exposures that start on the same day is resolved
+inside a subexposure. There are three possible options:</h4>
+<pre><code>- &quot;minimum&quot;: The considered daily dose is the minimum of all the exposures in the subexposure.
+- &quot;maximum&quot;: The considered daily dose is the maximum of all the exposures in the subexposure.
+- &quot;sum&quot;: The considered daily dose is the sum of all the exposures present in the subexposure.</code></pre>
+<p>For example, the following settings a maximum gap of 30 days for
+exposures to be joined. It uses the daily dose of the previous
+subexposure when joining exposures, employs the minimum daily dose for
+exposures starting on the same day, and considers the minimum daily dose
+for exposures that overlap.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cdm[[<span class="st">&quot;dus_cohort&quot;</span>]] <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addDrugUse</span>(cdm,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">ingredientConceptId =</span> <span class="dv">1125315</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">gapEra =</span> <span class="dv">30</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">eraJoinMode =</span> <span class="st">&quot;previous&quot;</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">overlapMode =</span> <span class="st">&quot;minimum&quot;</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">sameIndexMode =</span> <span class="st">&quot;minimum&quot;</span>)</span></code></pre></div>
+<pre><code>## # Source:   table&lt;dbplyr_290&gt; [?? x 13]
+## # Database: DuckDB 0.7.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
+##    cohort_definition_id subject_id cohort_start_date cohort_end_date duration
+##                   &lt;dbl&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;             &lt;dbl&gt;
+##  1                    1          2 2022-06-06        2022-06-07             2
+##  2                    1          7 2018-05-21        2018-07-20            61
+##  3                    1          5 2014-07-28        2019-11-20          1942
+##  4                    1          2 2022-05-24        2022-06-02            10
+##  5                    1          3 2009-04-18        2009-11-07           204
+##  6                    1          6 1991-01-28        1991-09-17           233
+##  7                    1          7 2016-02-01        2017-10-04           612
+##  8                    1          1 2021-02-25        2021-03-11            15
+##  9                    1          9 2022-09-11        2022-11-09            60
+## 10                    1          8 2012-02-15        2012-02-17             3
+## # ℹ more rows
+## # ℹ 8 more variables: number_exposures &lt;dbl&gt;, cumulative_quantity &lt;dbl&gt;,
+## #   initial_quantity &lt;dbl&gt;, impute_duration_percentage &lt;dbl&gt;,
+## #   number_eras &lt;dbl&gt;, impute_daily_dose_percentage &lt;dbl&gt;,
+## #   initial_daily_dose_milligram &lt;dbl&gt;, cumulative_dose_milligram &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
