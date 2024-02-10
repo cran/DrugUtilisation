@@ -4,30 +4,17 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup,message= FALSE, warning=FALSE--------------------------------------
+## ----setup, message = FALSE, warning = FALSE----------------------------------
 library(DrugUtilisation)
 library(CodelistGenerator)
-library(CDMConnector)
 library(dplyr)
-con <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
-connectionDetails <- list(
-  con = con,
-  writeSchema = "main",
-  cdmPrefix = NULL,
-  writePrefix = NULL
-)
-cdm <- mockDrugUtilisation(
-  connectionDetails = connectionDetails,
-  numberIndividual = 100
-)
+library(CDMConnector)
+
+cdm <- mockDrugUtilisation(numberIndividual = 200)
 
 ## -----------------------------------------------------------------------------
-#get concept from json file using readConceptList from this package or CodelistGenerator
-conceptSet_json_1 <- readConceptList(here::here("inst/Concept"), cdm)
-conceptSet_json_2 <- codesFromConceptSet(here::here("inst/Concept"), cdm)
-
-conceptSet_json_1
-conceptSet_json_2
+conceptSet_json <- codesFromConceptSet(here::here("inst/Concept"), cdm)
+conceptSet_json
 
 ## -----------------------------------------------------------------------------
 #get concept using code directly
@@ -50,8 +37,6 @@ conceptSet_ATC
 cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_1",
-  end = "observation_period_end_date",
-  requiredObservation = c(10, 10),
   overwrite = TRUE
 )
 cdm$asthma_1
@@ -67,7 +52,6 @@ cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_2",
   end = "event_end_date",
-  requiredObservation = c(10, 10),
   overwrite = TRUE
 )
 cdm$asthma_2
@@ -77,7 +61,7 @@ cdm <- generateConceptCohortSet(cdm,
   conceptSet = conceptSet_code,
   name = "asthma_3",
   end = "observation_period_end_date",
-  requiredObservation = c(1, 1),
+  requiredObservation = c(10, 10),
   overwrite = TRUE
 )
 cdm$asthma_3
@@ -88,42 +72,39 @@ cohortAttrition(cdm$asthma_3)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_alleras",
+  name = "simvastin_1",
   conceptSet = conceptSet_ingredient
 )
-cdm$dus_alleras
+cdm$simvastin_1
 
-cohortCount(cdm$dus_alleras)
+cohortCount(cdm$simvastin_1)
 
-cohortAttrition(cdm$dus_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
-
+cohortAttrition(cdm$simvastin_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_step2_0_inf",
+  name = "simvastin_2",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf) # default as c(1, Inf)
 )
 
-cohortAttrition(cdm$dus_step2_0_inf) %>% select(number_records, reason, excluded_records, excluded_subjects)
-
+cohortAttrition(cdm$simvastin_2)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_step3_alleras",
+  name = "simvastin_3",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
   gapEra = 30 # default as 0
 )
 
-cohortAttrition(cdm$dus_step3_alleras) %>% select(number_records, reason, excluded_records, excluded_subjects)
-
+cohortAttrition(cdm$simvastin_3) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_alleras_step4",
+  name = "simvastin_4",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
@@ -131,12 +112,12 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   priorUseWashout = 30
 )
 
-cohortAttrition(cdm$dus_alleras_step4) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$simvastin_4) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_alleras_step5",
+  name = "simvastin_5",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
@@ -145,27 +126,25 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   priorObservation = 30
 )
 
-cohortAttrition(cdm$dus_alleras_step5) %>% select(number_records, reason, excluded_records, excluded_subjects)
-
+cohortAttrition(cdm$simvastin_5) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_alleras_step67",
+  name = "simvastin_6",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
   gapEra = 30,
   priorUseWashout = 30,
   priorObservation = 30,
-  cohortDateRange = as.Date(c("2010-01-01", "2011-01-01")),
-  limi = "All"
+  cohortDateRange = as.Date(c("2010-01-01", "2011-01-01"))
 )
 
-cohortAttrition(cdm$dus_alleras_step67) %>% select(number_records, reason, excluded_records, excluded_subjects)
+cohortAttrition(cdm$simvastin_6) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_step8_firstera",
+  name = "simvastin_7",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
@@ -176,12 +155,11 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   limit = "First"
 )
 
-cohortAttrition(cdm$dus_step8_firstera) %>% select(number_records, reason, excluded_records, excluded_subjects)
-
+cohortAttrition(cdm$simvastin_7) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## -----------------------------------------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
-  name = "dus_step8_firstever",
+  name = "simvastin_8",
   conceptSet = conceptSet_ingredient,
   imputeDuration = "none",
   durationRange = c(0, Inf),
@@ -191,7 +169,4 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   cohortDateRange = as.Date(c(NA, NA)),
   limit = "First"
 )
-
-## -----------------------------------------------------------------------------
-DBI::dbDisconnect(con, shutdown = TRUE)
 

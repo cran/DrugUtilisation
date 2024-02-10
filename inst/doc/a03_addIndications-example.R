@@ -28,7 +28,6 @@ cdm <- CDMConnector::cdm_from_con(
 )
 
 ## ----eval=TRUE, message= FALSE, warning=FALSE---------------------------------
-# using CodelistGenerator
 conceptList <- CodelistGenerator::getDrugIngredientCodes(cdm, "acetaminophen")
 conceptList
 
@@ -72,7 +71,6 @@ cdm[["acetaminophen_users"]] %>%
 
 
 ## ----eval=TRUE, message= FALSE, warning=FALSE---------------------------------
-
 cdm[["acetaminophen_users"]] %>%
   addIndication(
     cdm = cdm, 
@@ -81,7 +79,7 @@ cdm[["acetaminophen_users"]] %>%
     unknownIndicationTable =  c("condition_occurrence")
   ) %>%
   summariseIndication(cdm) %>%
-  select("variable", "estimate_type", "estimate")
+  select("variable_name", "estimate_name", "estimate_value")
 
 
 ## ----eval=TRUE, message= FALSE, warning=FALSE---------------------------------
@@ -97,6 +95,6 @@ cdm[["acetaminophen_users"]] %>%
   summariseIndication(
     cdm,
     strata = list("age" = "age_group", "sex" = "sex")) %>%
-      select("variable", "estimate_type", "estimate","strata_name")
+      select("variable_name", "estimate_name", "estimate_value","strata_name")
 
 
