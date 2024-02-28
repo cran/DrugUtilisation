@@ -53,7 +53,7 @@ cdm <-
 
 cohortCount(cdm[["indications_cohort"]]) %>%
   left_join(
-    cohortSet(cdm[["indications_cohort"]]) %>%
+    settings(cdm[["indications_cohort"]]) %>%
       select(cohort_definition_id, cohort_name),
     by = "cohort_definition_id"
   )

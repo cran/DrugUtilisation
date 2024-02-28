@@ -13,28 +13,26 @@ library(PatientProfiles)
 
 cdm <- mockDrugUtilisation(numberIndividual = 200)
 
-new_cohort_set <- cohort_set(cdm$cohort1) %>%
+new_cohort_set <- settings(cdm$cohort1) %>%
   dplyr::arrange(cohort_definition_id) %>%
   dplyr::mutate(cohort_name = c("asthma","bronchitis","pneumonia"))
 
-cdm$cohort1 <- new_generated_cohort_set(cohort_ref     = cdm$cohort1,
-                                        cohort_set_ref = new_cohort_set,
-                                        overwrite      = TRUE)
+cdm$cohort1 <- cdm$cohort1 |>
+  newCohortTable(cohortSetRef = new_cohort_set)
 
-new_cohort_set <- cohort_set(cdm$cohort2) %>%
+new_cohort_set <- settings(cdm$cohort2) %>%
   dplyr::arrange(cohort_definition_id) %>%
   dplyr::mutate(cohort_name = c("albuterol","fluticasone","montelukast"))
 
-cdm$cohort2 <- new_generated_cohort_set(cohort_ref     = cdm$cohort2,
-                                        cohort_set_ref = new_cohort_set,
-                                        overwrite      = TRUE)
+cdm$cohort2 <- cdm$cohort2 |>
+  newCohortTable(cohortSetRef = new_cohort_set)
 
 
 ## ----message = FALSE, warning=FALSE-------------------------------------------
-cohort_set(cdm$cohort1)
+settings(cdm$cohort1)
 
 ## ----message = FALSE, warning=FALSE-------------------------------------------
-cohort_set(cdm$cohort2)
+settings(cdm$cohort2)
 
 ## ----message = FALSE, warning=FALSE-------------------------------------------
 summariseTreatmentFromCohort(cohort = cdm$cohort1,

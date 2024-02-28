@@ -45,7 +45,7 @@ cdm$asthma_1
 cohortCount(cdm$asthma_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-cohortAttrition(cdm$asthma_1)
+attrition(cdm$asthma_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateConceptCohortSet(cdm,
@@ -68,7 +68,7 @@ cdm$asthma_3
 
 cohortCount(cdm$asthma_3)
 
-cohortAttrition(cdm$asthma_3)
+attrition(cdm$asthma_3)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -79,7 +79,7 @@ cdm$simvastin_1
 
 cohortCount(cdm$simvastin_1)
 
-cohortAttrition(cdm$simvastin_1)
+attrition(cdm$simvastin_1)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -89,7 +89,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   durationRange = c(0, Inf) # default as c(1, Inf)
 )
 
-cohortAttrition(cdm$simvastin_2)
+attrition(cdm$simvastin_2)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -100,7 +100,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   gapEra = 30 # default as 0
 )
 
-cohortAttrition(cdm$simvastin_3) %>% select(number_records, reason, excluded_records, excluded_subjects)
+attrition(cdm$simvastin_3) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -112,7 +112,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   priorUseWashout = 30
 )
 
-cohortAttrition(cdm$simvastin_4) %>% select(number_records, reason, excluded_records, excluded_subjects)
+attrition(cdm$simvastin_4) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
@@ -126,7 +126,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   priorObservation = 30
 )
 
-cohortAttrition(cdm$simvastin_5) %>% select(number_records, reason, excluded_records, excluded_subjects)
+attrition(cdm$simvastin_5) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -140,7 +140,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   cohortDateRange = as.Date(c("2010-01-01", "2011-01-01"))
 )
 
-cohortAttrition(cdm$simvastin_6) %>% select(number_records, reason, excluded_records, excluded_subjects)
+attrition(cdm$simvastin_6) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
@@ -155,7 +155,7 @@ cdm <- generateDrugUtilisationCohortSet(cdm,
   limit = "First"
 )
 
-cohortAttrition(cdm$simvastin_7) %>% select(number_records, reason, excluded_records, excluded_subjects)
+attrition(cdm$simvastin_7) %>% select(number_records, reason, excluded_records, excluded_subjects)
 
 ## -----------------------------------------------------------------------------
 cdm <- generateDrugUtilisationCohortSet(cdm,
