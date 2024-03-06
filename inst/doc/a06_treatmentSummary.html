@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Xintong Li" />
 
-<meta name="date" content="2024-02-28" />
+<meta name="date" content="2024-03-05" />
 
 <title>Add treatment summary to a Drug Utilisation cohort</title>
 
@@ -342,7 +342,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 cohort</h1>
 <h4 class="author">Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell,
 Edward Burn, Xintong Li</h4>
-<h4 class="date">2024-02-28</h4>
+<h4 class="date">2024-03-05</h4>
 
 
 
@@ -419,24 +419,24 @@ defined in <code>cohort2</code> in the cohorts defined in
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summariseTreatmentFromCohort</span>(<span class="at">cohort =</span> cdm<span class="sc">$</span>cohort1,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">treatmentCohortName =</span> <span class="fu">c</span>(<span class="st">&quot;cohort2&quot;</span>),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">window =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">30</span>)))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 48 × 15</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cdm_name result_type      package_name package_version group_name group_level</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;      </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 48 × 16</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    result_id cdm_name result_type        package_name package_version group_name</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;              &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;     </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 38 more rows</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 9 more variables: strata_name &lt;chr&gt;, strata_level &lt;chr&gt;,</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   variable_name &lt;chr&gt;, variable_level &lt;chr&gt;, estimate_name &lt;chr&gt;,</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   estimate_type &lt;chr&gt;, estimate_value &lt;chr&gt;, additional_name &lt;chr&gt;,</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   additional_level &lt;chr&gt;</span></span></code></pre></div>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 10 more variables: group_level &lt;chr&gt;, strata_name &lt;chr&gt;,</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   strata_level &lt;chr&gt;, variable_name &lt;chr&gt;, variable_level &lt;chr&gt;,</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   estimate_name &lt;chr&gt;, estimate_type &lt;chr&gt;, estimate_value &lt;chr&gt;,</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   additional_name &lt;chr&gt;, additional_level &lt;chr&gt;</span></span></code></pre></div>
 <div id="strata-parameter" class="section level2">
 <h2>strata parameter</h2>
 <p>We can also stratify our cohort and calculate the estimates within
@@ -451,24 +451,24 @@ each strata group by using the <code>strata</code> parameter.</p>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">treatmentCohortId =</span> <span class="dv">1</span>,</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">strata =</span> <span class="fu">list</span>(<span class="st">&quot;sex&quot;</span> <span class="ot">=</span> <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;age&quot;</span> <span class="ot">=</span> <span class="st">&quot;age_group&quot;</span>)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                   )</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 60 × 15</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    cdm_name result_type      package_name package_version group_name group_level</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;      </span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 DUS MOCK summarised_trea… DrugUtilisa… 0.5.1           cohort_na… asthma     </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 60 × 16</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    result_id cdm_name result_type        package_name package_version group_name</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;              &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;     </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        NA DUS MOCK summarised_treatm… DrugUtilisa… 0.5.2           cohort_na…</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 50 more rows</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 9 more variables: strata_name &lt;chr&gt;, strata_level &lt;chr&gt;,</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   variable_name &lt;chr&gt;, variable_level &lt;chr&gt;, estimate_name &lt;chr&gt;,</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   estimate_type &lt;chr&gt;, estimate_value &lt;chr&gt;, additional_name &lt;chr&gt;,</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   additional_level &lt;chr&gt;</span></span></code></pre></div>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 10 more variables: group_level &lt;chr&gt;, strata_name &lt;chr&gt;,</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   strata_level &lt;chr&gt;, variable_name &lt;chr&gt;, variable_level &lt;chr&gt;,</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   estimate_name &lt;chr&gt;, estimate_type &lt;chr&gt;, estimate_value &lt;chr&gt;,</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   additional_name &lt;chr&gt;, additional_level &lt;chr&gt;</span></span></code></pre></div>
 <p>Notice that we have also used the <code>treatmentCohortId</code>
 parameter to specify that we only want to explore <code>albuterol</code>
 across the cohorts defined in <code>cohort1</code>.</p>
