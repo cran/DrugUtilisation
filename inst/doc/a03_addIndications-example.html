@@ -11,7 +11,7 @@
 
 <meta name="author" content="Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Xintong Li" />
 
-<meta name="date" content="2024-05-14" />
+<meta name="date" content="2024-06-03" />
 
 <title>Add indications to Drug Utilisation Cohort</title>
 
@@ -354,7 +354,7 @@ display: none;
 Cohort</h1>
 <h4 class="author">Marti Catala, Mike Du, Yuchen Guo, Kim Lopez-Guell,
 Edward Burn, Xintong Li</h4>
-<h4 class="date">2024-05-14</h4>
+<h4 class="date">2024-06-03</h4>
 
 </div>
 
@@ -472,25 +472,25 @@ cdm[[&quot;acetaminophen_users&quot;]] %&gt;%
     indicationGap =  c(0, 30, 365),
     unknownIndicationTable =  c(&quot;condition_occurrence&quot;)
   )
-#&gt; # Source:   table&lt;og_044_1715646254&gt; [?? x 16]
-#&gt; # Database: DuckDB v0.10.0 [martics@Windows 10 x64:R 4.2.3/C:\Users\martics\AppData\Local\Temp\RtmpoTdumo\file70e037153989.duckdb]
+#&gt; # Source:   table&lt;og_044_1717442351&gt; [?? x 16]
+#&gt; # Database: DuckDB v0.10.0 [martics@Windows 10 x64:R 4.2.3/C:\Users\martics\AppData\Local\Temp\RtmpQPoPtg\file4838333c2bd.duckdb]
 #&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         
-#&gt;  1                    1         97 1999-07-06        1999-07-20     
-#&gt;  2                    1        180 1981-11-09        1981-11-23     
-#&gt;  3                    1        249 2011-01-19        2011-01-26     
-#&gt;  4                    1        358 1957-03-27        1957-04-03     
-#&gt;  5                    1        364 2016-09-10        2016-09-24     
-#&gt;  6                    1        387 1974-08-26        1974-10-25     
-#&gt;  7                    1        403 1926-02-07        1926-02-21     
-#&gt;  8                    1        479 1949-02-17        1949-03-03     
-#&gt;  9                    1        480 1954-02-10        1954-03-12     
-#&gt; 10                    1        480 1994-11-07        1994-11-14     
+#&gt;  1                    1         35 2014-07-26        2014-08-02     
+#&gt;  2                    1         96 1942-02-26        1942-02-26     
+#&gt;  3                    1         96 1962-05-22        1962-05-29     
+#&gt;  4                    1        189 1961-11-05        1961-11-19     
+#&gt;  5                    1        457 1998-07-04        1998-08-10     
+#&gt;  6                    1        512 1960-02-05        1960-02-19     
+#&gt;  7                    1        710 1961-10-15        1961-10-29     
+#&gt;  8                    1        806 1967-03-06        1967-03-20     
+#&gt;  9                    1        859 1992-11-11        1992-11-18     
+#&gt; 10                    1        865 1974-03-31        1974-04-14     
 #&gt; # ℹ more rows
 #&gt; # ℹ 12 more variables: indication_gap_0_bronchitis &lt;dbl&gt;,
 #&gt; #   indication_gap_0_sinusitis &lt;dbl&gt;, indication_gap_0_none &lt;dbl&gt;,
-#&gt; #   indication_gap_0_unknown &lt;dbl&gt;, indication_gap_30_sinusitis &lt;dbl&gt;,
-#&gt; #   indication_gap_30_bronchitis &lt;dbl&gt;, indication_gap_30_none &lt;dbl&gt;,
+#&gt; #   indication_gap_0_unknown &lt;dbl&gt;, indication_gap_30_bronchitis &lt;dbl&gt;,
+#&gt; #   indication_gap_30_sinusitis &lt;dbl&gt;, indication_gap_30_none &lt;dbl&gt;,
 #&gt; #   indication_gap_30_unknown &lt;dbl&gt;, indication_gap_365_bronchitis &lt;dbl&gt;,
 #&gt; #   indication_gap_365_sinusitis &lt;dbl&gt;, indication_gap_365_none &lt;dbl&gt;, …</code></pre>
 <p>Use <code>indicationGap</code> to specify the indication gaps, which
@@ -516,10 +516,10 @@ with summariseIndication()</h2>
 #&gt;    &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;           
 #&gt;  1 number records           count         13860           
 #&gt;  2 number subjects          count         2679            
-#&gt;  3 Indication on index date count         &lt;NA&gt;            
-#&gt;  4 Indication on index date percentage    &lt;NA&gt;            
-#&gt;  5 Indication on index date count         2518            
-#&gt;  6 Indication on index date percentage    18.1673881673882
+#&gt;  3 Indication on index date count         2518            
+#&gt;  4 Indication on index date percentage    18.1673881673882
+#&gt;  5 Indication on index date count         &lt;NA&gt;            
+#&gt;  6 Indication on index date percentage    &lt;NA&gt;            
 #&gt;  7 Indication on index date count         163             
 #&gt;  8 Indication on index date percentage    1.17604617604618
 #&gt;  9 Indication on index date count         11178           
@@ -547,10 +547,10 @@ cdm[[&quot;acetaminophen_users&quot;]] %&gt;%
 #&gt;    &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;      
 #&gt;  1 number records           count         13860            overall    
 #&gt;  2 number subjects          count         2679             overall    
-#&gt;  3 Indication on index date count         &lt;NA&gt;             overall    
-#&gt;  4 Indication on index date percentage    &lt;NA&gt;             overall    
-#&gt;  5 Indication on index date count         2518             overall    
-#&gt;  6 Indication on index date percentage    18.1673881673882 overall    
+#&gt;  3 Indication on index date count         2518             overall    
+#&gt;  4 Indication on index date percentage    18.1673881673882 overall    
+#&gt;  5 Indication on index date count         &lt;NA&gt;             overall    
+#&gt;  6 Indication on index date percentage    &lt;NA&gt;             overall    
 #&gt;  7 Indication on index date count         163              overall    
 #&gt;  8 Indication on index date percentage    1.17604617604618 overall    
 #&gt;  9 Indication on index date count         11178            overall    

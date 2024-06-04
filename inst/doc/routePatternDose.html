@@ -435,7 +435,7 @@ and route.</p>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cdm =</span> cdm,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ingredientConceptId =</span> <span class="dv">1125315</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>## # Source:   table&lt;og_166_1715646328&gt; [?? x 9]
+<pre><code>## # Source:   table&lt;og_166_1717442420&gt; [?? x 9]
 ## # Database: DuckDB v0.10.0 [martics@Windows 10 x64:R 4.2.3/:memory:]
 ##    drug_exposure_id person_id drug_concept_id drug_exposure_start_date
 ##               &lt;int&gt;     &lt;int&gt;           &lt;dbl&gt; &lt;date&gt;                  
@@ -461,9 +461,9 @@ ingredients.</p>
 ##   median, q75, q95, max
 ## ! Table is collected to memory as not all requested estimates are supported on
 ##   the database side
-## → Start summary of data, at 2024-05-14 01:25:28
+## → Start summary of data, at 2024-06-03 20:20:20
 ## 
-## ✔ Summary finished, at 2024-05-14 01:25:29</code></pre>
+## ✔ Summary finished, at 2024-06-03 20:20:20</code></pre>
 <pre><code>## # A tibble: 84 × 13
 ##    result_id cdm_name group_name      group_level   strata_name strata_level
 ##        &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;       
@@ -540,20 +540,20 @@ details added to the cohort.</p>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">quantity =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">dose =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>             <span class="dv">1125315</span>)</span></code></pre></div>
-<pre><code>## # Source:   table&lt;og_174_1715646338&gt; [?? x 13]
+<pre><code>## # Source:   table&lt;og_174_1717442429&gt; [?? x 13]
 ## # Database: DuckDB v0.10.0 [martics@Windows 10 x64:R 4.2.3/:memory:]
 ##    cohort_definition_id subject_id cohort_start_date cohort_end_date duration
 ##                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;             &lt;dbl&gt;
 ##  1                    1          9 2022-09-11        2022-11-09            60
-##  2                    1          8 2012-02-15        2012-02-17             3
-##  3                    1          7 2016-02-01        2017-10-04           612
-##  4                    1          1 2021-02-25        2021-03-11            15
-##  5                    1          6 1991-01-28        1991-09-17           233
-##  6                    1          2 2022-06-06        2022-06-07             2
-##  7                    1          5 2014-07-28        2019-11-20          1942
-##  8                    1          4 2021-05-05        2021-12-15           225
-##  9                    1          3 2009-04-18        2009-11-07           204
-## 10                    1          2 2022-05-24        2022-06-02            10
+##  2                    1          2 2022-06-06        2022-06-07             2
+##  3                    1          5 2014-07-28        2019-11-20          1942
+##  4                    1          6 1991-01-28        1991-09-17           233
+##  5                    1          7 2018-05-21        2018-07-20            61
+##  6                    1          1 2021-02-25        2021-03-11            15
+##  7                    1          8 2012-02-15        2012-02-17             3
+##  8                    1          7 2016-02-01        2017-10-04           612
+##  9                    1          2 2022-05-24        2022-06-02            10
+## 10                    1          3 2009-04-18        2009-11-07           204
 ## # ℹ more rows
 ## # ℹ 8 more variables: number_exposures &lt;dbl&gt;, cumulative_quantity &lt;dbl&gt;,
 ## #   initial_quantity &lt;dbl&gt;, impute_duration_percentage &lt;dbl&gt;,
@@ -621,20 +621,20 @@ for exposures that overlap.</p>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">eraJoinMode =</span> <span class="st">&quot;previous&quot;</span>,</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">overlapMode =</span> <span class="st">&quot;minimum&quot;</span>,</span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">sameIndexMode =</span> <span class="st">&quot;minimum&quot;</span>)</span></code></pre></div>
-<pre><code>## # Source:   table&lt;og_179_1715646346&gt; [?? x 13]
+<pre><code>## # Source:   table&lt;og_179_1717442437&gt; [?? x 13]
 ## # Database: DuckDB v0.10.0 [martics@Windows 10 x64:R 4.2.3/:memory:]
 ##    cohort_definition_id subject_id cohort_start_date cohort_end_date duration
 ##                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;             &lt;dbl&gt;
 ##  1                    1          9 2022-09-11        2022-11-09            60
-##  2                    1          8 2012-02-15        2012-02-17             3
-##  3                    1          7 2016-02-01        2017-10-04           612
-##  4                    1          1 2021-02-25        2021-03-11            15
-##  5                    1          6 1991-01-28        1991-09-17           233
-##  6                    1          2 2022-06-06        2022-06-07             2
-##  7                    1          5 2014-07-28        2019-11-20          1942
-##  8                    1          4 2021-05-05        2021-12-15           225
-##  9                    1          3 2009-04-18        2009-11-07           204
-## 10                    1          2 2022-05-24        2022-06-02            10
+##  2                    1          2 2022-06-06        2022-06-07             2
+##  3                    1          5 2014-07-28        2019-11-20          1942
+##  4                    1          6 1991-01-28        1991-09-17           233
+##  5                    1          7 2018-05-21        2018-07-20            61
+##  6                    1          1 2021-02-25        2021-03-11            15
+##  7                    1          8 2012-02-15        2012-02-17             3
+##  8                    1          7 2016-02-01        2017-10-04           612
+##  9                    1          2 2022-05-24        2022-06-02            10
+## 10                    1          3 2009-04-18        2009-11-07           204
 ## # ℹ more rows
 ## # ℹ 8 more variables: number_exposures &lt;dbl&gt;, cumulative_quantity &lt;dbl&gt;,
 ## #   initial_quantity &lt;dbl&gt;, impute_duration_percentage &lt;dbl&gt;,
