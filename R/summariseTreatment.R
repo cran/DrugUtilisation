@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of DrugUtilisation
 #
@@ -14,115 +14,83 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' This function is used to summarise the dose table over multiple cohorts.
+#' This function is used to summarise treatments received
 #'
-#' @param cohort Cohort with drug use variables and strata.
-#' @param strata Stratification list.
-#' @param window Window where to summarise the treatments.
+#' @param cohort A cohort table in a cdm reference.
+#' @param window Time window over which to summarise the treatments.
 #' @param treatmentCohortName Name of a cohort in the cdm that contains the
-#' interest treatments.
+#'  treatments of interest.
 #' @param treatmentCohortId Cohort definition id of interest from
 #' treatmentCohortName.
-#' @param combination Whether to include combination treatments.
-#' @param minCellCount Below this number counts will be suppressed.
+#' @param strata List with column names or vectors of column names groups to
+#' stratify results by.
+#' @param indexDate Variable in x that contains the date to compute the
+#' intersection.
+#' @param censorDate Whether to censor overlap events at a specific date or a
+#' column date of x. If NULL, end of observation will be used.
+#' @param minCellCount ```r lifecycle::badge("deprecated")```
 #'
-#' @return A summary of the drug use stratified by cohort_name and strata_name
+#' @return A summary of treatments stratified by cohort_name and strata_name
 #'
 #' @export
 #'
 #' @examples
 #' \donttest{
 #' library(DrugUtilisation)
-#' library(PatientProfiles)
-#' library(CodelistGenerator)
 #'
 #' cdm <- mockDrugUtilisation()
-#' cdm <- generateDrugUtilisationCohortSet(
-#'   cdm, "dus_cohort", getDrugIngredientCodes(cdm, "acetaminophen")
-#' )
-#' cdm[["dus_cohort"]] <- cdm[["dus_cohort"]] %>%
-#'   addDrugUse(ingredientConceptId = 1125315)
-#' result <- summariseDrugUse(cdm[["dus_cohort"]])
-#' print(result)
-#'
-#' cdm[["dus_cohort"]] <- cdm[["dus_cohort"]] %>%
-#'   addSex() %>%
-#'   addAge(ageGroup = list("<40" = c(0, 30), ">40" = c(40, 150)))
-#'
-#' summariseDrugUse(
-#'   cdm[["dus_cohort"]], strata = list(
-#'    "age_group" = "age_group", "sex" = "sex",
-#'    "age_group and sex" = c("age_group", "sex")
+#' cdm$cohort1 |>
+#'   summariseTreatment(
+#'     treatmentCohortName = "cohort2",
+#'     window = list(c(0, 30), c(31, 365))
 #'   )
-#' )
 #' }
 #'
-summariseTreatmentFromCohort <- function(cohort,
-                                         strata = list(),
-                                         window,
-                                         treatmentCohortName,
-                                         treatmentCohortId = NULL,
-                                         combination = FALSE,
-                                         minCellCount = 5){
-  return(summariseTreatment(cohort = cohort,
-                            strata = strata,
-                            window = window,
-                            treatmentCohortName = treatmentCohortName,
-                            treatmentCohortId   = treatmentCohortId,
-                            combination  = combination,
-                            minCellCount = minCellCount))
-
-}
-
-#'This function is used to summarise the dose table over multiple cohorts.
-#'
-#' @param cohort Cohort with drug use variables and strata.
-#' @param strata Stratification list.
-#' @param window Window where to summarise the treatments.
-#' @param treatmentConceptSet Concept set list to summarise.
-#' @param combination Whether to include combination treatments.
-#' @param minCellCount Below this number counts will be suppressed.
-#'
-#' @return A summary of the drug use stratified by cohort_name and strata_name
-#'
-#' @export
-#'
-summariseTreatmentFromConceptSet <- function(cohort,
-                                             strata = list(),
-                                             window,
-                                             treatmentConceptSet,
-                                             combination = FALSE,
-                                             minCellCount = 5){
-  return(summariseTreatment(cohort = cohort,
-                            strata = strata,
-                            window = window,
-                            treatmentConceptSet = treatmentConceptSet,
-                            combination  = combination,
-                            minCellCount = minCellCount))
-}
-
-
 summariseTreatment <- function(cohort,
-                               strata = list(),
                                window,
-                               treatmentCohortName = NULL,
+                               treatmentCohortName,
                                treatmentCohortId = NULL,
-                               treatmentConceptSet = NULL,
-                               combination = FALSE,
-                               minCellCount = 5) {
-  if (!is.list(window)) {
-    window <- list(window)
+                               strata = list(),
+                               indexDate = "cohort_start_date",
+                               censorDate = NULL,
+                               minCellCount = lifecycle::deprecated()) {
+  if (lifecycle::is_present(minCellCount)) {
+    lifecycle::deprecate_warn("0.7.0", "summariseCodeUse(minCellCount)", with = "omopgenerics::suppress()")
   }
-  cdm <- attr(cohort, "cdm_reference")
+
+  return(summariseTreatmentInternal(
+    cohort = cohort,
+    strata = strata,
+    window = window,
+    indexDate = indexDate,
+    censorDate = censorDate,
+    treatmentCohortName = treatmentCohortName,
+    treatmentCohortId = treatmentCohortId,
+    combination = FALSE
+  ))
+}
+
+
+summariseTreatmentInternal <- function(cohort,
+                                       strata = list(),
+                                       window,
+                                       indexDate,
+                                       censorDate,
+                                       treatmentCohortName = NULL,
+                                       treatmentCohortId = NULL,
+                                       treatmentConceptSet = NULL,
+                                       combination = FALSE,
+                                       call = parent.frame()) {
+  if (!is.list(window)) window <- list(window)
+  cdm <- omopgenerics::cdmReference(cohort)
   # initial checks
   checkmate::checkList(strata, types = "character")
   checkmate::checkTRUE(all(unlist(strata) %in% colnames(cohort)))
   checkmate::checkCharacter(treatmentCohortName, null.ok = TRUE)
+  checkmate::checkCharacter(censorDate, null.ok = TRUE)
+  checkmate::checkCharacter(indexDate)
 
-  # combination
-  if (combination) {
-    cli::cli_warn("Combination is not implemented yet")
-  }
+  cohortNames <- settings(cohort) |> dplyr::pull("cohort_name")
 
   # correct window names
   if (!is.null(names(window))) {
@@ -130,48 +98,37 @@ summariseTreatment <- function(cohort,
   } else {
     namesWindow <- lapply(window, function(x) {
       paste0(as.character(x[1]), " to ", as.character(x[2]))
-    }) %>%
+    }) |>
       unlist()
   }
   names(window) <- paste0("window", seq_along(window))
 
   # interest variables
-  cohort <- cohort %>%
+  cohort <- cohort |>
     dplyr::select(dplyr::all_of(c(
       "cohort_definition_id", "subject_id", "cohort_start_date",
       "cohort_end_date", unique(unname(unlist(strata)))
     )))
 
   # add cohort intersect
-  if (!is.null(treatmentCohortName)) {
-    cohort <- cohort %>%
-      PatientProfiles::addCohortIntersectFlag(
-        targetCohortTable = treatmentCohortName,
-        targetCohortId = treatmentCohortId,
-        targetEndDate = NULL,
-        window = window,
-        nameStyle = "{window_name}_{cohort_name}"
-      )
-  }
-
-  # add concept intersect
-  if (!is.null(treatmentConceptSet)) {
-    cohort <- cohort %>%
-      PatientProfiles::addConceptIntersectFlag(
-        conceptSet = treatmentConceptSet,
-        window = window,
-        nameStyle = "{window_name}_{concept_name}"
-      )
-  }
+  cohort <- cohort |>
+    PatientProfiles::addCohortIntersectFlag(
+      targetCohortTable = treatmentCohortName,
+      targetCohortId = treatmentCohortId,
+      targetEndDate = NULL,
+      indexDate = indexDate,
+      censorDate = censorDate,
+      window = window,
+      nameStyle = "{window_name}_{cohort_name}"
+    )
 
   # create untreated
   for (win in names(window)) {
-    cohort <- cohort %>%
+    cohort <- cohort |>
       dplyr::mutate(!!!untreated(colnames(cohort), win))
   }
-  cohort <- cohort %>%
-    dplyr::compute() %>%
-    PatientProfiles::addCohortName() %>%
+  cohort <- cohort |>
+    PatientProfiles::addCohortName() |>
     dplyr::collect()
 
   # summarise
@@ -182,41 +139,52 @@ summariseTreatment <- function(cohort,
     group = list("cohort_name"),
     strata = strata,
     variables = newCols,
-    estimates = c("count", "percentage")
-  )
+    estimates = c("count", "percentage"),
+    counts = FALSE
+  ) |>
+    suppressMessages()
   cols <- colnames(result)
 
+  treatments <- settings(cdm[[treatmentCohortName]])
+  if (!is.null(treatmentCohortId)) {
+    treatments <- treatments |>
+      dplyr::filter(.data$cohort_definition_id %in% .env$treatmentCohortId)
+  }
+  treatments <- treatments |> dplyr::pull("cohort_name")
+  treatments <- c(treatments, "untreated")
+
   # correct names
-  result <- result %>%
+  result <- result |>
     tidyr::separate_wider_delim(
       cols = "variable_name",
       delim = "_",
-      names = c("window_name", "new_variable_name"),
+      names = c("window", "variable_name"),
       too_few = "align_end",
       too_many = "merge",
       cols_remove = TRUE
-    ) %>%
-    dplyr::rename("variable_name" = "new_variable_name") %>%
-    dplyr::filter(!is.na(.data$window_name)) |>
+    ) |>
     dplyr::left_join(
       dplyr::tibble(
-        "window_name" = paste0("window", seq_along(window)),
-        "window" = namesWindow
+        window = paste0("window", seq_along(namesWindow)),
+        window_name = namesWindow
       ),
-      by = "window_name"
-    ) %>%
-    dplyr::arrange(
-      .data$group_level, .data$strata_name, .data$strata_level,
-      .data$window_name, .data$variable_name
-    ) %>%
-    dplyr::select(-c("window_name", "additional_name", "additional_level")) %>%
-    visOmopResults::uniteAdditional(cols = "window") |>
+      by = "window"
+    ) |>
+    dplyr::select(-c(
+      "cdm_name", "additional_name", "additional_level", "window"
+    )) |>
+    treatmentCombinations(
+      namesWindow = namesWindow,
+      treatments = treatments,
+      cohortNames = cohortNames
+    ) |>
+    visOmopResults::uniteAdditional(cols = "window_name") |>
     PatientProfiles::addCdmName(cdm = cdm)
 
   result <- result |>
     omopgenerics::newSummarisedResult(settings = dplyr::tibble(
       "result_id" = unique(result$result_id),
-      "result_type" = "summarised_treatment",
+      "result_type" = "summarise_treatment",
       "package_name" = "DrugUtilisation",
       "package_version" = as.character(utils::packageVersion("DrugUtilisation"))
     ))
@@ -227,7 +195,57 @@ summariseTreatment <- function(cohort,
 untreated <- function(cols, w) {
   col <- cols[startsWith(cols, w)]
   sum <- paste0(".data[[\"", col, "\"]]", collapse = " + ")
-  paste0("dplyr::if_else(", sum, " > 0, 0, 1)") %>%
-    rlang::parse_exprs() %>%
+  paste0("dplyr::if_else(", sum, " > 0, 0, 1)") |>
+    rlang::parse_exprs() |>
     rlang::set_names(paste0(w, "_untreated"))
+}
+treatmentCombinations <- function(result, namesWindow, treatments, cohortNames) {
+  treatments <- dplyr::tibble(
+    "variable_name" = treatments, "variable_level" = NA_character_
+  ) |>
+    dplyr::mutate(order_treatment = dplyr::row_number())
+  strata <- result |>
+    dplyr::select("result_id", "strata_name", "strata_level") |>
+    dplyr::distinct() |>
+    dplyr::mutate(order_strata = dplyr::row_number())
+  cohorts <- dplyr::tibble(
+    group_name = "cohort_name", group_level = cohortNames
+  ) |>
+    dplyr::mutate(order_group = dplyr::row_number())
+  windows <- dplyr::tibble(window_name = namesWindow) |>
+    dplyr::mutate(order_window = dplyr::row_number())
+  order <- strata |>
+    dplyr::cross_join(cohorts) |>
+    dplyr::cross_join(windows) |>
+    dplyr::cross_join(treatments) |>
+    dplyr::arrange(
+      .data$order_group, .data$order_strata, .data$order_window,
+      .data$order_treatment
+    ) |>
+    dplyr::mutate("id" = dplyr::row_number()) |>
+    dplyr::select(!dplyr::starts_with("order"))
+  cols <- colnames(result)
+  cols <- cols[!startsWith(cols, "estimate")]
+  toAdd <- order |>
+    dplyr::mutate(
+      "estimate_value" = "0",
+      "estimate_name" = "count",
+      "estimate_type" = "integer"
+    ) |>
+    dplyr::union_all(
+      order |>
+        dplyr::mutate(
+          "estimate_value" = "0",
+          "estimate_name" = "percentage",
+          "estimate_type" = "percentage"
+        )
+    ) |>
+    dplyr::select(-"id") |>
+    dplyr::anti_join(result, by = cols)
+  result <- result |>
+    dplyr::union_all(toAdd) |>
+    dplyr::left_join(order, by = cols) |>
+    dplyr::arrange(.data$id, .data$estimate_name) |>
+    dplyr::select(-"id")
+  return(result)
 }

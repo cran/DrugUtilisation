@@ -2,27 +2,29 @@
 % Please edit documentation in R/generateIngredientCohortSet.R
 \name{generateIngredientCohortSet}
 \alias{generateIngredientCohortSet}
-\title{Generates a cohort of the drug use of ingredient name(s) of interest.}
+\title{Generate a set of drug cohorts based on drug ingredients}
 \usage{
 generateIngredientCohortSet(
   cdm,
   name,
   ingredient = NULL,
-  durationRange = c(1, Inf),
-  imputeDuration = "none",
-  gapEra = 0,
-  priorUseWashout = 0,
-  priorObservation = 0,
-  cohortDateRange = as.Date(c(NA, NA)),
-  limit = "all",
   doseForm = NULL,
-  ingredientRange = c(1, Inf)
+  doseUnit = NULL,
+  routeCategory = NULL,
+  ingredientRange = c(1, Inf),
+  gapEra = 1,
+  durationRange = lifecycle::deprecated(),
+  imputeDuration = lifecycle::deprecated(),
+  priorUseWashout = lifecycle::deprecated(),
+  priorObservation = lifecycle::deprecated(),
+  cohortDateRange = lifecycle::deprecated(),
+  limit = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{cdm}{A cdm_reference object.}
+\item{cdm}{A cdm reference.}
 
-\item{name}{Name of the GeneratedCohortSet}
+\item{name}{The name of the new cohort table to add to the cdm reference.}
 
 \item{ingredient}{Accepts both vectors and named lists of ingredient names.
 For a vector input, e.g., c("acetaminophen", "codeine"), it generates a
@@ -34,58 +36,66 @@ each name leads to a combined set of descendant concept codes for the
 specified ingredients, creating distinct cohort_definition_id for each
 named group.}
 
-\item{durationRange}{Range between the duration must be comprised. It should
-be a numeric vector of length two, with no NAs and the first value should be
-equal or smaller than the second one. It is only required if imputeDuration
-= TRUE. If NULL no restrictions are applied.}
-
-\item{imputeDuration}{Whether/how the duration should be imputed
-"none", "median", "mean", "mode", or it can be a count}
-
-\item{gapEra}{Number of days between two continuous exposures to be
-considered in the same era.}
-
-\item{priorUseWashout}{Prior days without exposure.}
-
-\item{priorObservation}{Minimum number of days of prior observation
-required for the incident eras to be considered.}
-
-\item{cohortDateRange}{Range for cohort_start_date and cohort_end_date}
-
-\item{limit}{Choice on how to summarise the exposures. There are
-two options:
-"all" we summarise the output will be a summary of the exposed eras of
-each individual. Each individual can contribute multiple times.
-"first" we only consider the first observable era of each individual that fulfills the criteria provided
-in previous parameters. In this case each individual can not contribute with multiple rows.}
-
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
+
+\item{doseUnit}{Only descendants codes with the specified dose unit
+will be returned. If NULL, descendant codes will be returned regardless
+of dose unit}
+
+\item{routeCategory}{Only descendants codes with the specified route
+will be returned. If NULL, descendant codes will be returned regardless
+of route category.}
 
 \item{ingredientRange}{Used to restrict descendant codes to those
 associated with a specific number of ingredients. Must be a vector of length
 two with the first element the minimum number of ingredients allowed and
 the second the maximum. A value of c(2, 2) would restrict to only concepts
 associated with two ingredients.}
+
+\item{gapEra}{Number of days between two continuous exposures to be
+considered in the same era. Records that have fewer days between them than
+this gap will be concatenated into the same cohort record.}
+
+\item{durationRange}{Deprecated.}
+
+\item{imputeDuration}{Deprecated.}
+
+\item{priorUseWashout}{Deprecated}
+
+\item{priorObservation}{Deprecated.}
+
+\item{cohortDateRange}{Deprecated.}
+
+\item{limit}{Deprecated.}
 }
 \value{
-The function returns the 'cdm' object with the created cohorts as
-references of the object.
+The function returns the cdm reference provided with the addition of
+the new cohort table.
 }
 \description{
-Generates a cohort of the drug use of ingredient name(s) of interest.
+Adds a new cohort table to the cdm reference with individuals who have drug
+exposure records with the specified drug ingredient. Cohort start and end
+dates will be based on drug record start and end dates, respectively. Records
+that overlap or have fewer days between them than the specified gap era will
+be concatenated into a single cohort entry.
 }
 \examples{
 \donttest{
 library(DrugUtilisation)
+library(dplyr)
+
 cdm <- mockDrugUtilisation()
+
 cdm <- generateIngredientCohortSet(
   cdm = cdm,
   ingredient = "acetaminophen",
-  name = "test"
+  name = "acetaminophen"
 )
-cdm
+
+cdm$acetaminophen |>
+  glimpse()
 }
 
 }

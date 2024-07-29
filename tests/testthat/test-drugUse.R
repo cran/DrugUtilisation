@@ -1,6 +1,6 @@
 test_that("test flags", {
   skip_on_cran()
-  cdm <- mockDrugUtilisation()
+  cdm <- mockDrugUtilisation(con = connection(), writeSchema = schema(), seed = 1)
   x <- tidyr::expand_grid(
     duration = c(TRUE, FALSE), quantity = c(TRUE, FALSE), dose = c(TRUE, FALSE)
   )
@@ -11,11 +11,11 @@ test_that("test flags", {
     "cumulative_dose_milligram"
   )
   for (k in seq_len(nrow(x))) {
-    xx <- cdm$cohort1 %>%
+    xx <- cdm$cohort1 |>
       addDrugUse(
         ingredientConceptId = 1539403, duration = x$duration[k],
         quantity = x$quantity[k], dose = x$dose[k]
-      ) %>%
+      ) |>
       expect_no_error()
     expect_true(all(c("number_exposures", "number_eras") %in% colnames(xx)))
     if (x$duration[k]) {
@@ -34,12 +34,15 @@ test_that("test flags", {
       expect_false(any(columnsDose %in% colnames(xx)))
     }
   }
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test overlapMode", {
   skip_on_cran()
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     drug_exposure = dplyr::tibble(
       drug_exposure_id = 1:9,
       person_id = c(1, 1, 1, 1, 1, 2, 2, 2, 2),
@@ -101,11 +104,11 @@ test_that("test overlapMode", {
       period_type_concept_id = 0
     ),
     concept_relationship = dplyr::tibble(
-        concept_id_1 = c(c(1, 2, 3, 4, 5)),
-        concept_id_2 = c(19016586, 46275062, 35894935, 19135843, 19082107),
-        relationship_id = c(rep("RxNorm has dose form", 5)),
-        valid_start_date = as.Date("1900-01-01"),
-        valid_end_date = as.Date("2100-01-01")
+      concept_id_1 = c(c(1, 2, 3, 4, 5)),
+      concept_id_2 = c(19016586, 46275062, 35894935, 19135843, 19082107),
+      relationship_id = c(rep("RxNorm has dose form", 5)),
+      valid_start_date = as.Date("1900-01-01"),
+      valid_end_date = as.Date("2100-01-01")
     )
   )
   variables <- c(
@@ -142,14 +145,14 @@ test_that("test overlapMode", {
   )
 
   c("cdm_reference", "cohort_attrition", "cohort_set") %in%
-    names(attributes(x)) %>%
-    all() %>%
+    names(attributes(x)) |>
+    all() |>
     expect_true()
   expect_true(all(variables %in% colnames(x)))
 
   value_cohort_1 <- c(3, 1, 10, 61, 810, 41, 94)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2000-01-01")
     )
@@ -171,8 +174,8 @@ test_that("test overlapMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(3, 1, 10, 61, 1140, 41, 94)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2000-01-01")
     )
@@ -194,8 +197,8 @@ test_that("test overlapMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(3, 1, 10, 61, 810, 41, 94)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2000-01-01")
     )
@@ -217,8 +220,8 @@ test_that("test overlapMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(3, 1, 10, 61, 1140, 41, 94)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2000-01-01")
     )
@@ -240,20 +243,23 @@ test_that("test overlapMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(3, 1, 10, 61, 1480, 41, 94)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2000-01-01")
     )
   for (k in 1:length(value_cohort_1)) {
     expect_true(xx[[variables[k]]] == value_cohort_1[k])
   }
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test gapEra and eraJoinMode", {
   skip_on_cran()
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     drug_exposure = dplyr::tibble(
       drug_exposure_id = 1:9,
       person_id = c(1, 1, 1, 1, 1, 2, 2, 2, 2),
@@ -345,8 +351,8 @@ test_that("test gapEra and eraJoinMode", {
   ))
 
   value_cohort_1 <- c(2, 2, 30, 60, 850, 15, 35)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2001-01-01")
     )
@@ -369,8 +375,8 @@ test_that("test gapEra and eraJoinMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(2, 2, 30, 60, 850, 15, 35)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2001-01-01")
     )
@@ -393,8 +399,8 @@ test_that("test gapEra and eraJoinMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(2, 1, 30, 60, 850, 15, 35)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2001-01-01")
     )
@@ -417,8 +423,8 @@ test_that("test gapEra and eraJoinMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(2, 1, 30, 60, 1600, 15, 35)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2001-01-01")
     )
@@ -441,20 +447,23 @@ test_that("test gapEra and eraJoinMode", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(2, 1, 30, 60, 1350, 15, 35)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(
       subject_id == 1 & cohort_start_date == as.Date("2001-01-01")
     )
   for (k in 1:length(value_cohort_1)) {
     expect_true(xx[[variables[k]]] == value_cohort_1[k])
   }
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test gapEra, eraJoinMode & sameIndexOverlap", {
   skip_on_cran()
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     drug_exposure = dplyr::tibble(
       drug_exposure_id = 1:9,
       person_id = c(1, 1, 1, 1, 1, 2, 2, 2, 2),
@@ -545,8 +554,8 @@ test_that("test gapEra, eraJoinMode & sameIndexOverlap", {
     dailyDoseRange = c(0, Inf)
   ))
   value_cohort_1 <- c(4, 2, NA, 61, 1600, NA, 61)
-  xx <- x %>%
-    dplyr::collect() %>%
+  xx <- x |>
+    dplyr::collect() |>
     dplyr::filter(subject_id == 2)
   for (k in 1:length(value_cohort_1)) {
     expect_equal(xx[[variables[k]]], value_cohort_1[k])
@@ -585,12 +594,14 @@ test_that("test gapEra, eraJoinMode & sameIndexOverlap", {
       durationRange = c(1, Inf),
       dailyDoseRange = c(0, Inf)
     ))
-    result <- x %>%
-      dplyr::collect() %>%
+    result <- x |>
+      dplyr::collect() |>
       dplyr::filter(subject_id == 2)
     expect_true(result$number_eras == expected_result$number_eras[k])
     expect_true(result$cumulative_dose_milligram == expected_result$cumulative_dose_milligram[k])
   }
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test splitSubexposures", {
@@ -642,12 +653,12 @@ test_that("test splitSubexposures", {
       "2000-02-10"
     ))
   )
-  cdm <- mockDrugUtilisation(connectionDetails)
+  cdm <- mockDrugUtilisation(con = connection(), writeSchema = schema())
   cdm <- omopgenerics::insertTable(cdm = cdm, name = "cohort1", table = x)
-  y <- splitSubexposures(cdm[["cohort1"]], cdm) %>% dplyr::collect()
+  y <- splitSubexposures(cdm[["cohort1"]], cdm) |> dplyr::collect()
 
   # get first cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-01-01") &
         .data$subject_id == 1
@@ -658,12 +669,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- 10
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -675,7 +686,7 @@ test_that("test splitSubexposures", {
   }
 
   # get second cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-02-01") &
         .data$subject_id == 1
@@ -686,12 +697,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(3, 10, 15)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -703,7 +714,7 @@ test_that("test splitSubexposures", {
   }
 
   # get third cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-03-05") &
         .data$subject_id == 1
@@ -714,12 +725,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(5, 6, 10, 12)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -731,7 +742,7 @@ test_that("test splitSubexposures", {
   }
 
   # get fourth cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-04-01") &
         .data$subject_id == 1
@@ -742,12 +753,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(7, 8, 10, 11, 15, 21)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -759,7 +770,7 @@ test_that("test splitSubexposures", {
   }
 
   # get fifth cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-05-01") &
         .data$subject_id == 1
@@ -770,12 +781,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(1, 5, 8, 10, 11)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -787,7 +798,7 @@ test_that("test splitSubexposures", {
   }
 
   # get sixth cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-01-03") &
         .data$subject_id == 2
@@ -798,12 +809,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(3, 8, 15, 19, 20)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -815,7 +826,7 @@ test_that("test splitSubexposures", {
   }
 
   # get seventh cohort entry
-  yy <- y %>%
+  yy <- y |>
     dplyr::filter(
       .data$cohort_start_date == as.Date("2000-02-01") &
         .data$subject_id == 2
@@ -826,12 +837,12 @@ test_that("test splitSubexposures", {
   dayEndSubexposure <- c(7, 10)
   expect_true(length(unique(yy$subexposure_id)) == numberExpectedSubexposures)
   for (k in 1:length(countsPerSubexposure)) {
-    yyy <- yy %>% dplyr::filter(.data$subexposure_id == k)
+    yyy <- yy |> dplyr::filter(.data$subexposure_id == k)
     expect_true(
-      lubridate::day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
+      clock::get_day(yyy$subexposure_start_date[1]) == dayStartSubexposure[k]
     )
     expect_true(
-      lubridate::day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
+      clock::get_day(yyy$subexposure_end_date[1]) == dayEndSubexposure[k]
     )
     if (countsPerSubexposure[k] == 0) {
       expect_true(nrow(yyy) == 1)
@@ -841,13 +852,15 @@ test_that("test splitSubexposures", {
       expect_true(sum(is.na(yyy)) == 0)
     }
   }
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test empty targetCohortName", {
   skip_on_cran()
-  cdm <- mockDrugUtilisation(connectionDetails)
+  cdm <- mockDrugUtilisation(con = connection(), writeSchema = schema())
 
-  cdm[["cohort1"]] <- cdm[["cohort1"]] %>%
+  cdm[["cohort1"]] <- cdm[["cohort1"]] |>
     dplyr::filter(.data$subject_id < 1)
 
   expect_error(x <- addDrugUse(
@@ -862,6 +875,8 @@ test_that("test empty targetCohortName", {
     durationRange = c(1, Inf),
     dailyDoseRange = c(100, Inf)
   ))
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("expected errors on inputs", {
@@ -869,7 +884,8 @@ test_that("expected errors on inputs", {
   # condition_occurrence is going to be the strataCohortTable, person the
   # doseTable
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     cohort1 = dplyr::tibble(
       cohort_definition_id = c(1, 1, 1, 2),
       subject_id = c(1, 1, 2, 1),
@@ -908,12 +924,15 @@ test_that("expected errors on inputs", {
   expect_error(result <- summariseDrugUse(
     cdm = cdm,
   ))
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("check output format", {
   skip_on_cran()
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     cohort = dplyr::tibble(
       cohort_definition_id = c(1, 1, 1, 2),
       subject_id = c(1, 1, 2, 1),
@@ -936,13 +955,16 @@ test_that("check output format", {
       period_type_concept_id = 0
     )
   )
-  result <- cdm[["cohort"]] %>%
+  result <- cdm[["cohort"]] |>
     summariseDrugUse()
   expect_true(all(c("tbl_df", "tbl", "data.frame") %in% class(result)))
   expect_true(inherits(result, "summarised_result"))
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("check all estimates", {
+  skip_on_cran()
   all_estimates <- c(
     "min", "max", "mean", "median", # "iqr", "range",
     "q05", "q10", "q15", "q20",
@@ -950,7 +972,8 @@ test_that("check all estimates", {
     "q75", "q80", "q85", "q90", "q95", "sd"
   )
   cdm <- mockDrugUtilisation(
-    connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     observation_period = dplyr::tibble(
       person_id = 1:2,
       observation_period_id = 1:2,
@@ -981,8 +1004,8 @@ test_that("check all estimates", {
   for (k in 1:length(all_estimates)) {
     res <- summariseDrugUse(
       cdm[["dose_table"]],
-      drugUseEstimates = all_estimates[k]
-    ) %>%
+      estimates = all_estimates[k]
+    ) |>
       dplyr::filter(.data$group_name == "cohort_name")
     expect_true(nrow(res[res$variable_name == c("initial_daily_dose"), ]) == 1)
     expect_true(res$estimate_name[res$variable_name == c("initial_daily_dose")] == all_estimates[k])
@@ -992,11 +1015,14 @@ test_that("check all estimates", {
   res <- summariseDrugUse(
     cdm[["dose_table"]],
     cdm = cdm,
-    drugUseEstimates = all_estimates
+    estimates = all_estimates
   )
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("check all variables", {
+  skip_on_cran()
   all_estimates <- c(
     "min", "max", "mean", "median", # "iqr", "range",
     "q05", "q10", "q15", "q20",
@@ -1004,7 +1030,8 @@ test_that("check all variables", {
     "q75", "q80", "q85", "q90", "q95", "sd"
   )
   cdm <- mockDrugUtilisation(
-    connectionDetails = connectionDetails,
+    con = connection(),
+    writeSchema = schema(),
     concept_relationship = dplyr::tibble(
       concept_id_1 = c(1125315, 43135274, 2905077, 1125360),
       concept_id_2 = c(19016586, 46275062, 35894935, 19135843),
@@ -1017,9 +1044,9 @@ test_that("check all variables", {
     cdm, "dus", list(acetaminophen = c(1125315, 43135274, 2905077, 1125360))
   )
 
-  result <- cdm[["dus"]] %>%
-    addDrugUse(ingredientConceptId = 1125315) %>%
-    summariseDrugUse() %>%
+  result <- cdm[["dus"]] |>
+    addDrugUse(ingredientConceptId = 1125315) |>
+    summariseDrugUse() |>
     expect_no_error()
   expect_true(all(c(
     "number subjects", "number records", "duration", "number_exposures",
@@ -1027,72 +1054,6 @@ test_that("check all variables", {
     "number_eras", "impute_daily_dose_percentage", "initial_daily_dose_milligram",
     "cumulative_dose_milligram"
   ) %in% result$variable_name))
-})
 
-test_that("test impute duration percentage", {
-  conceptList <- list(`Ingredient: acetaminophen (1125315)` =
-                        c(1125315, 43135274, 2905077, 1125360))
-
-  cdm <- mockDrugUtilisation(numberIndividual  = 200)
-
-  cdm$drug_exposure <- cdm$drug_exposure %>%
-    dplyr::mutate(drug_exposure_end_date = dplyr::if_else(person_id == 14, NA, drug_exposure_end_date))
-
-  cdm <- generateDrugUtilisationCohortSet(
-    cdm  = cdm,
-    name = "acetaminophen_example3",
-    conceptSet = conceptList,
-    imputeDuration = "mean"
-  )
-
-  expect_true(cdm$acetaminophen_example3 %>%
-    addDrugUse(
-      ingredientConceptId = 1125315,
-      duration = TRUE,
-      quantity = FALSE,
-      dose     = FALSE,
-      imputeDuration = "mean"
-    ) %>%
-    dplyr::filter(subject_id == 14) %>%
-    dplyr::pull(impute_duration_percentage) == 100)
-
-
-  cdm <- mockDrugUtilisation(
-    connectionDetails,
-    drug_exposure = dplyr::tibble(
-      drug_exposure_id = 1:4,
-      person_id = c(1, 1, 1, 1),
-      drug_concept_id = c(1539462, 1539463, 1539403, 1539403),
-      drug_exposure_start_date = as.Date(c(
-        "2000-01-01", "2001-02-01", "2001-02-17", "2001-04-10"
-      )),
-      drug_exposure_end_date = as.Date(c(
-        NA,  "2001-02-15", "2001-03-19", "2001-05-10"
-      )),
-      quantity = c(1,2,3,4),
-      drug_type_concept_id = 0
-    ),
-    cohort1 = dplyr::tibble(cohort_definition_id = 1, subject_id = 1,
-                            cohort_start_date = as.Date("1990-01-01"),
-                            cohort_end_date = as.Date("2020-01-01")),
-    observation_period = dplyr::tibble(
-      observation_period_id = 1,
-      person_id = 1,
-      observation_period_start_date = as.Date("1980-01-01"),
-      observation_period_end_date = as.Date("2030-01-01"),
-      period_type_concept_id = 0
-    )
-  )
-
-  cdm$cohort1 <- cdm$cohort1 %>% addDrugUse(
-    cdm = cdm,
-    ingredientConceptId = 1539403,
-    conceptSet = list("simvastatin" = c(1539462, 1539463, 1539403)),
-      imputeDuration = "median")
-
-
-  expect_true(cdm$cohort1 %>%
-                dplyr::filter(subject_id == 1) %>%
-                dplyr::pull(impute_duration_percentage) == 25)
-
+  mockDisconnect(cdm = cdm)
 })

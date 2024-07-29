@@ -2,54 +2,29 @@
 % Please edit documentation in R/generateAtcCohortSet.R
 \name{generateAtcCohortSet}
 \alias{generateAtcCohortSet}
-\title{Generates a cohort of the drug use of ATC name(s) of interest.}
+\title{Generate a set of drug cohorts based on ATC classification}
 \usage{
 generateAtcCohortSet(
   cdm,
   name,
   atcName = NULL,
-  durationRange = c(1, Inf),
-  imputeDuration = "none",
-  gapEra = 0,
-  priorUseWashout = 0,
-  priorObservation = 0,
-  cohortDateRange = as.Date(c(NA, NA)),
-  limit = "all",
   level = c("ATC 1st"),
-  doseForm = NULL
+  doseForm = NULL,
+  gapEra = 1,
+  durationRange = lifecycle::deprecated(),
+  imputeDuration = lifecycle::deprecated(),
+  priorUseWashout = lifecycle::deprecated(),
+  priorObservation = lifecycle::deprecated(),
+  cohortDateRange = lifecycle::deprecated(),
+  limit = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{cdm}{A cdm_reference object.}
+\item{cdm}{A cdm reference.}
 
-\item{name}{Name of the GeneratedCohortSet}
+\item{name}{The name of the new cohort table to add to the cdm reference.}
 
-\item{atcName}{Names of ATC of interest.}
-
-\item{durationRange}{Range between the duration must be comprised. It should
-be a numeric vector of length two, with no NAs and the first value should be
-equal or smaller than the second one. It is only required if imputeDuration
-= TRUE. If NULL no restrictions are applied.}
-
-\item{imputeDuration}{Whether/how the duration should be imputed
-"none", "median", "mean", "mode", or it can be a count}
-
-\item{gapEra}{Number of days between two continuous exposures to be
-considered in the same era.}
-
-\item{priorUseWashout}{Prior days without exposure.}
-
-\item{priorObservation}{Minimum number of days of prior observation
-required for the incident eras to be considered.}
-
-\item{cohortDateRange}{Range for cohort_start_date and cohort_end_date}
-
-\item{limit}{Choice on how to summarise the exposures. There are
-two options:
-"all" we summarise the output will be a summary of the exposed eras of
-each individual. Each individual can contribute multiple times.
-"first" we only consider the first observable era of each individual that fulfills the criteria provided
-in previous parameters. In this case each individual can not contribute with multiple rows.}
+\item{atcName}{Names of ATC classification of interest.}
 
 \item{level}{ATC level. Can be one or more of "ATC 1st", "ATC 2nd",
 "ATC 3rd", "ATC 4th", and "ATC 5th"}
@@ -57,21 +32,49 @@ in previous parameters. In this case each individual can not contribute with mul
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
+
+\item{gapEra}{Number of days between two continuous exposures to be
+considered in the same era. Records that have fewer days between them than
+this gap will be concatenated into the same cohort record.}
+
+\item{durationRange}{Deprecated.}
+
+\item{imputeDuration}{Deprecated.}
+
+\item{priorUseWashout}{Deprecated}
+
+\item{priorObservation}{Deprecated.}
+
+\item{cohortDateRange}{Deprecated.}
+
+\item{limit}{Deprecated.}
 }
 \value{
-The function returns the 'cdm' object with the created cohorts as
-references of the object.
+The function returns the cdm reference provided with the addition of
+the new cohort table.
 }
 \description{
-Generates a cohort of the drug use of ATC name(s) of interest.
+Adds a new cohort table to the cdm reference with individuals who have drug
+exposure records that belong to the specified Anatomical Therapeutic Chemical
+(ATC) classification. Cohort start and end dates will be based on drug record
+start and end dates, respectively. Records that overlap or have fewer days
+between them than the specified gap era will be concatenated into a single
+cohort entry.
 }
 \examples{
 \donttest{
 library(DrugUtilisation)
+library(dplyr)
+
 cdm <- mockDrugUtilisation()
-cdm <- generateAtcCohortSet(cdm, name =  "test")
-cdm
-cdm$test
-settings(cdm$test)
+
+cdm <- generateAtcCohortSet(
+  cdm = cdm,
+  atcName = "alimentary tract and metabolism",
+  name = "drugs"
+)
+
+cdm$drugs |>
+  glimpse()
 }
 }

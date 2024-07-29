@@ -1,4 +1,3 @@
-
 test_that("test case single indication", {
   skip_on_cran()
   targetCohortName <- dplyr::tibble(
@@ -55,130 +54,148 @@ test_that("test case single indication", {
     condition_end_date = as.Date("2020-05-31")
   )
 
-  cdm <-
-    mockDrugUtilisation(
-      connectionDetails,
-      cohort1 = targetCohortName,
-      cohort2 = indicationCohortName,
-      condition_occurrence = condition_occurrence,
-      observation_period = observationPeriod
-    )
-  #check it works without cdm object specified
+  cdm <- mockDrugUtilisation(
+    con = connection(),
+    writeSchema = schema(),
+    cohort1 = targetCohortName,
+    cohort2 = indicationCohortName,
+    condition_occurrence = condition_occurrence,
+    observation_period = observationPeriod
+  )
+  # check it works without cdm object specified
 
-  expect_no_error(cdm[["cohort1"]] %>%
-    addIndication(indicationCohortName = "cohort2", indicationGap = 0,
+  expect_no_error(cdm[["cohort1"]] |>
+    addIndication(
+      indicationCohortName = "cohort2", indicationWindow = list(c(0, 0)),
       unknownIndicationTable = NULL
     ))
 
-  # check for indication 0
-  res0 <- cdm[["cohort1"]] %>%
+  # check overwrites existing variable with warning
+  expect_warning(cdm$new <- cdm[["cohort1"]] |>
+    dplyr::mutate(a = 1) |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 0,
+      indicationCohortName = "cohort2",
+      indicationWindow = list(
+        c(0, 0),
+        c(-Inf, 0)
+      ),
+      indexDate = "cohort_end_date",
+      unknownIndicationTable = NULL
+    ) |>
+    addIndication(
+      indicationCohortName = "cohort2",
+      indicationWindow = list(
+        c(0, 0),
+        c(-Inf, 0)
+      ),
+      indexDate = "cohort_end_date",
+      unknownIndicationTable = NULL
+    ))
+  expect_true("a" %in% colnames(cdm$new))
+
+
+
+  # check for indication 0
+  res0 <- cdm[["cohort1"]] |>
+    addIndication(
+      indicationCohortName = "cohort2", indicationWindow = list(c(0, 0)),
       unknownIndicationTable = NULL
     )
-  expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 3)
+  expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_0_asthma", "indication_gap_0_covid",
-      "indication_gap_0_none") %in%
+    c("indication_0_to_0") %in%
       setdiff(colnames(res0), colnames(cdm[["cohort1"]]))
   ))
 
-  res0 <- res0 %>% indicationToStrata()
-
   expect_true(
-    res0 %>%
-      dplyr::filter(.data$subject_id == 3) %>%
-      dplyr::pull("indication_gap_0") == "Asthma"
+    res0 |>
+      dplyr::filter(.data$subject_id == 3) |>
+      dplyr::pull("indication_0_to_0") == "asthma"
   )
   expect_true(
-    all(res0 %>%
-          dplyr::filter(.data$subject_id != 3) %>%
-          dplyr::pull("indication_gap_0") == "None")
+    all(res0 |>
+      dplyr::filter(.data$subject_id != 3) |>
+      dplyr::pull("indication_0_to_0") == "none")
   )
 
   # check for indication 1
-  res1 <- cdm[["cohort1"]] %>%
+  res1 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 1,
+      indicationCohortName = "cohort2", indicationWindow = list(c(-1, 0)),
       unknownIndicationTable = NULL
     )
-  expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 3)
+  expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_1_asthma", "indication_gap_1_covid",
-      "indication_gap_1_none") %in%
+    c("indication_m1_to_0") %in%
       setdiff(colnames(res1), colnames(cdm[["cohort1"]]))
   ))
 
-  res1 <- res1 %>% indicationToStrata()
 
   expect_true(
-    res1 %>%
-      dplyr::filter(.data$subject_id == 3) %>%
-      dplyr::pull("indication_gap_1") == "Asthma"
+    res1 |>
+      dplyr::filter(.data$subject_id == 3) |>
+      dplyr::pull("indication_m1_to_0") == "asthma"
   )
   expect_true(
-    all(res1 %>%
-          dplyr::filter(.data$subject_id != 3) %>%
-          dplyr::pull("indication_gap_1") == "None")
+    all(res1 |>
+      dplyr::filter(.data$subject_id != 3) |>
+      dplyr::pull("indication_m1_to_0") == "none")
   )
 
   # check for indication 2
-  res2 <- cdm[["cohort1"]] %>%
+  res2 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 2,
+      indicationCohortName = "cohort2", indicationWindow = list(c(-2, 0)),
       unknownIndicationTable = NULL
     )
 
-  expect_true(length(setdiff(colnames(res2), colnames(cdm[["cohort1"]]))) == 3)
+  expect_true(length(setdiff(colnames(res2), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_2_asthma", "indication_gap_2_covid",
-      "indication_gap_2_none") %in%
+    c("indication_m2_to_0") %in%
       setdiff(colnames(res2), colnames(cdm[["cohort1"]]))
   ))
 
-  res2 <- res2 %>% indicationToStrata()
-
   expect_true(all(
-    res2 %>%
+    res2 |>
       dplyr::arrange(
         .data$subject_id,
         .data$cohort_start_date,
         .data$cohort_definition_id,
         .data$cohort_end_date
-      ) %>%
-      dplyr::pull("indication_gap_2")==
-    c("Asthma", "None", "None", "Asthma")
+      ) |>
+      dplyr::pull("indication_m2_to_0") ==
+      c("asthma", "none", "none", "asthma")
   ))
 
   # check for all indication Gap
-  resinf <- cdm[["cohort1"]] %>%
+  resinf <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = Inf,
+      indicationCohortName = "cohort2", indicationWindow = list(c(-Inf, 0)),
       unknownIndicationTable = NULL
     )
-  expect_true(length(setdiff(colnames(resinf), colnames(cdm[["cohort1"]]))) == 3)
+  expect_true(length(setdiff(colnames(resinf), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_inf_asthma", "indication_gap_inf_covid",
-      "indication_gap_inf_none") %in%
+    c("indication_minf_to_0") %in%
       setdiff(colnames(resinf), colnames(cdm[["cohort1"]]))
   ))
 
-  resinf <- resinf %>% indicationToStrata()
 
-  expect_true(any(identical(
-    resinf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_inf"),
-    c("Asthma", "Covid and Asthma", "None", "Asthma")
-  ),
-  identical(
-    resinf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_inf"),
-    c("Asthma", "Asthma and Covid", "None", "Asthma")
-  )
+  expect_true(any(
+    identical(
+      resinf |>
+        dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+        dplyr::pull("indication_minf_to_0"),
+      c("asthma", "asthma and covid", "none", "asthma")
+    ),
+    identical(
+      resinf |>
+        dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+        dplyr::pull("indication_minf_to_0"),
+      c("asthma", "asthma and covid", "none", "asthma")
+    )
   ))
 
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test case single indication with unknown indication table", {
@@ -226,113 +243,112 @@ test_that("test case single indication with unknown indication table", {
     )),
     period_type_concept_id = 44814724
   )
-  cdm <-mockDrugUtilisation(
-    connectionDetails, cohort1 = targetCohortName,
+  cdm <- mockDrugUtilisation(
+    con = connection(),
+    writeSchema = schema(),
+    cohort1 = targetCohortName,
     cohort2 = indicationCohortName, condition_occurrence = condition_occurrence,
     observation_period = observationPeriod
   )
 
   # check for indication 0
-  res0 <- cdm[["cohort1"]] %>%
+  res0 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 0,
+      indicationCohortName = "cohort2", indicationWindow = list(c(0, 0)),
       unknownIndicationTable = "condition_occurrence"
     )
-  expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 4)
+  expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_0_asthma", "indication_gap_0_covid",
-      "indication_gap_0_none", "indication_gap_0_unknown") %in%
+    c("indication_0_to_0") %in%
       setdiff(colnames(res0), colnames(cdm[["cohort1"]]))
   ))
-  res0 <- res0 %>% indicationToStrata()
+
   expect_true(identical(
-    res0 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_0"),
-    c("None", "None", "None", "Asthma")
+    res0 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_0_to_0"),
+    c("none", "none", "none", "asthma")
   ))
 
   # check for indication 1
-  res1 <- cdm[["cohort1"]] %>%
+  res1 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 1,
+      indicationCohortName = "cohort2", indicationWindow = list(c(-1, 0)),
       unknownIndicationTable = "condition_occurrence"
     )
-  expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 4)
+  expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_1_asthma", "indication_gap_1_covid",
-      "indication_gap_1_none", "indication_gap_1_unknown") %in%
+    c("indication_m1_to_0") %in%
       setdiff(colnames(res1), colnames(cdm[["cohort1"]]))
   ))
-  res1 <- res1 %>% indicationToStrata()
+
   expect_true(identical(
-    res1 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_1"),
-    c("None", "Unknown", "None", "Asthma")
+    res1 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m1_to_0"),
+    c("none", "unknown", "none", "asthma")
   ))
 
   # check for indication 6
-  res6 <- cdm[["cohort1"]] %>%
+  res6 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = 6,
+      indicationCohortName = "cohort2", indicationWindow = list(c(-6, 0)),
       unknownIndicationTable = "condition_occurrence"
     )
-  expect_true(length(setdiff(colnames(res6), colnames(cdm[["cohort1"]]))) == 4)
+  expect_true(length(setdiff(colnames(res6), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
-    c("indication_gap_6_asthma", "indication_gap_6_covid",
-      "indication_gap_6_none", "indication_gap_6_unknown") %in%
+    c("indication_m6_to_0") %in%
       setdiff(colnames(res6), colnames(cdm[["cohort1"]]))
   ))
-  res6 <- res6 %>% indicationToStrata()
+
   expect_true(identical(
-    res6 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_6"),
-    c("Asthma", "Unknown", "None", "Asthma")
+    res6 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m6_to_0"),
+    c("asthma", "unknown", "none", "asthma")
   ))
 
   # check all gaps simultaniously
-  res016 <- cdm[["cohort1"]] %>%
+  res016 <- cdm[["cohort1"]] |>
     addIndication(
-      indicationCohortName = "cohort2", indicationGap = c(0, 1, 6),
+      indicationCohortName = "cohort2", indicationWindow = list(c(0, 0), c(-1, 0), c(-6, 0)),
       unknownIndicationTable = "condition_occurrence"
     )
-  expect_true(length(setdiff(colnames(res016), colnames(cdm[["cohort1"]]))) == 12)
+  expect_true(length(setdiff(colnames(res016), colnames(cdm[["cohort1"]]))) == 3)
   expect_true(all(
-    c("indication_gap_0_asthma", "indication_gap_0_covid",
-      "indication_gap_0_none", "indication_gap_0_unknown",
-      "indication_gap_1_asthma", "indication_gap_1_covid",
-      "indication_gap_1_none", "indication_gap_1_unknown",
-      "indication_gap_6_asthma", "indication_gap_6_covid",
-      "indication_gap_6_none", "indication_gap_6_unknown") %in%
+    c(
+      "indication_0_to_0", "indication_m1_to_0",
+      "indication_m6_to_0"
+    ) %in%
       setdiff(colnames(res016), colnames(cdm[["cohort1"]]))
   ))
-  res016 <- res016 %>% indicationToStrata()
+
   expect_true(identical(
-    res016 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_0"),
-    res0 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_0")
+    res016 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_0_to_0"),
+    res0 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_0_to_0")
   ))
   expect_true(identical(
-    res016 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_1"),
-    res1 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_1")
+    res016 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m1_to_0"),
+    res1 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m1_to_0")
   ))
   expect_true(identical(
-    res016 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_6"),
-    res6 %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_6")
+    res016 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m6_to_0"),
+    res6 |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m6_to_0")
   ))
+
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test indicationDate", {
@@ -383,7 +399,8 @@ test_that("test indicationDate", {
 
   cdm <-
     mockDrugUtilisation(
-      connectionDetails,
+      con = connection(),
+      writeSchema = schema(),
       cohort1 = targetCohortName,
       cohort2 = indicationCohortName,
       condition_occurrence = condition_occurrence,
@@ -391,73 +408,64 @@ test_that("test indicationDate", {
     )
 
   # original
-  res012inf <- cdm[["cohort1"]] %>%
+  res012inf <- cdm[["cohort1"]] |>
     addIndication(
       indicationCohortName = "cohort2",
-      indicationGap = c(0, 1, 2, Inf), unknownIndicationTable = NULL
-    ) %>% dplyr::relocate(indication_gap_inf_asthma) %>%
-    indicationToStrata()
+      indicationWindow = list(c(0, 0), c(-1, 0), c(-2, 0), c(-Inf, 0)), unknownIndicationTable = NULL
+    )
   expect_equal(
     sort(setdiff(colnames(res012inf), colnames(cdm[["cohort1"]]))),
     sort(c(
-      "indication_gap_0", "indication_gap_1", "indication_gap_2",
-      "indication_gap_inf"
+      "indication_0_to_0", "indication_m1_to_0", "indication_m2_to_0",
+      "indication_minf_to_0"
     ))
   )
 
   # change indicationDate
-  cdm[["cohort1"]] <- cdm[["cohort1"]] %>%
+  cdm[["cohort1"]] <- cdm[["cohort1"]] |>
     dplyr::rename("start_date" = "cohort_start_date")
-  res012infS <- cdm[["cohort1"]] %>%
+  res012infS <- cdm[["cohort1"]] |>
     addIndication(
       indicationCohortName = "cohort2",
-      indicationGap = c(0, 1, 2, Inf), unknownIndicationTable = NULL,
-      indicationDate = "start_date"
-    ) %>% dplyr::relocate(indication_gap_inf_asthma) %>%
-    indicationToStrata()
+      indicationWindow = list(c(0, 0), c(-1, 0), c(-2, 0), c(-Inf, 0)), unknownIndicationTable = NULL,
+      indexDate = "start_date"
+    )
   expect_equal(
     sort(setdiff(colnames(res012infS), colnames(cdm[["cohort1"]]))),
     sort(c(
-      "indication_gap_0", "indication_gap_1", "indication_gap_2",
-      "indication_gap_inf"
+      "indication_0_to_0", "indication_m1_to_0", "indication_m2_to_0",
+      "indication_minf_to_0"
     ))
   )
   expect_true(
     setdiff(colnames(res012inf), colnames(res012infS)) == "cohort_start_date"
   )
   expect_true(identical(
-    res012inf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_0"),
-    res012infS %>%
-      dplyr::arrange(.data$subject_id, .data$start_date) %>%
-      dplyr::pull("indication_gap_0")
+    res012inf |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_0_to_0"),
+    res012infS |>
+      dplyr::arrange(.data$subject_id, .data$start_date) |>
+      dplyr::pull("indication_0_to_0")
   ))
   expect_true(identical(
-    res012inf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_1"),
-    res012infS %>%
-      dplyr::arrange(.data$subject_id, .data$start_date) %>%
-      dplyr::pull("indication_gap_1")
+    res012inf |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m1_to_0"),
+    res012infS |>
+      dplyr::arrange(.data$subject_id, .data$start_date) |>
+      dplyr::pull("indication_m1_to_0")
   ))
   expect_true(identical(
-    res012inf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_2"),
-    res012infS %>%
-      dplyr::arrange(.data$subject_id, .data$start_date) %>%
-      dplyr::pull("indication_gap_2")
-  ))
-  expect_true(identical(
-    res012inf %>%
-      dplyr::arrange(.data$subject_id, .data$cohort_start_date) %>%
-      dplyr::pull("indication_gap_inf"),
-    res012infS %>%
-      dplyr::arrange(.data$subject_id, .data$start_date) %>%
-      dplyr::pull("indication_gap_inf")
+    res012inf |>
+      dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
+      dplyr::pull("indication_m2_to_0"),
+    res012infS |>
+      dplyr::arrange(.data$subject_id, .data$start_date) |>
+      dplyr::pull("indication_m2_to_0")
   ))
 
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("test attributes", {
@@ -507,33 +515,31 @@ test_that("test attributes", {
   )
   cdm <-
     mockDrugUtilisation(
-      connectionDetails,
+      con = connection(),
+      writeSchema = schema(),
       cohort1 = targetCohortName,
       cohort2 = indicationCohortName,
       condition_occurrence = condition_occurrence,
       observation_period = observationPeriod
     )
 
-  cdm[["cohort1new"]] <- cdm[["cohort1"]] %>%
+  cdm[["cohort1new"]] <- cdm[["cohort1"]] |>
     addIndication(
       indicationCohortName = "cohort2",
-      indicationGap = c(0, 1, 2, Inf), unknownIndicationTable = NULL
+      indicationWindow = list(c(0, 0), c(-1, 0), c(-2, 0), c(-Inf, 0)), unknownIndicationTable = NULL
     )
   expect_identical(
     sort(names(attributes(cdm[["cohort1"]]))),
     sort(names(attributes(cdm[["cohort1new"]])))
   )
 
-  cdm[["cohort1new"]] <- cdm[["cohort1new"]] %>% indicationToStrata()
-  expect_identical(
-    sort(names(attributes(cdm[["cohort1"]]))),
-    sort(names(attributes(cdm[["cohort1new"]])))
-  )
+
   expect_identical(
     class(cdm[["cohort1"]])[class(cdm[["cohort1"]]) != "GeneratedCohortSet"],
     class(cdm[["cohort1new"]])[class(cdm[["cohort1new"]]) != "GeneratedCohortSet"]
   )
 
+  mockDisconnect(cdm = cdm)
 })
 
 test_that("summariseIndication", {
@@ -582,42 +588,51 @@ test_that("summariseIndication", {
   )
   cdm <-
     mockDrugUtilisation(
-      connectionDetails,
+      con = connection(),
+      writeSchema = schema(),
       cohort1 = targetCohortName,
       cohort2 = indicationCohortName,
       condition_occurrence = condition_occurrence,
       observation_period = observationPeriod
     )
 
-  res <- cdm[["cohort1"]] %>%
-    addIndication(
-      indicationCohortName = "cohort2", indicationGap = c(0, 7, 30, Inf),
-      unknownIndicationTable = "condition_occurrence"
+  result <- cdm[["cohort1"]] |>
+    summariseIndication(
+      indicationCohortName = "cohort2",
+      unknownIndicationTable = "condition_occurrence",
+      indicationWindow = list(c(0, 0), c(-7, 0), c(-30, 0), c(-Inf, 0))
     )
-
-  result <- summariseIndication(res)
 
   expect_true(inherits(result, "summarised_result"))
   expect_true(any(grepl("Indication on index date", result$variable_name)))
-  expect_true(any(grepl("Indication during prior 7 days", result$variable_name)))
-  expect_true(any(grepl("Indication during prior 30 days", result$variable_name)))
-  expect_true(any(grepl("Indication any time prior", result$variable_name)))
+  expect_true(any(grepl("Indication from 7 days before to the index date", result$variable_name)))
+  expect_true(any(grepl("Indication from 30 days before to the index date", result$variable_name)))
+  expect_true(any(grepl("Indication any time before or on index date", result$variable_name)))
 
-  res <- res %>%
+  res <- cdm[["cohort1"]] |>
     PatientProfiles::addAge(
       ageGroup = list("<40" = c(0, 39), ">=40" = c(40, 150))
-    ) %>%
+    ) |>
     PatientProfiles::addSex()
 
-  result <- summariseIndication(
-    res, strata = list("age_group", "sex", c("age_group", "sex"))
-  )
+  result <- res |>
+    summariseIndication(
+      strata = list(
+        "age_group",
+        "sex",
+        c("age_group", "sex")
+      ),
+      indicationCohortName = "cohort2",
+      unknownIndicationTable = "condition_occurrence",
+      indicationWindow = list(c(0, 0), c(-7, 0), c(-30, 0), c(-Inf, 0))
+    )
+
 
   expect_true(inherits(result, "summarised_result"))
   x <- tidyr::expand_grid(
-    group_level = omopgenerics::settings(res) %>% dplyr::pull("cohort_name"),
+    group_level = omopgenerics::settings(res) |> dplyr::pull("cohort_name"),
     strata_name = c("overall", "age_group", "sex", "age_group &&& sex")
-  ) %>%
+  ) |>
     dplyr::left_join(
       dplyr::tibble(
         strata_name = c(
@@ -634,18 +649,21 @@ test_that("summariseIndication", {
     )
   expect_identical(
     nrow(result),
-    result %>%
+    result |>
       dplyr::inner_join(
-        x, by = c("group_level", "strata_name", "strata_level")
-      ) %>%
+        x,
+        by = c("group_level", "strata_name", "strata_level")
+      ) |>
       nrow()
   )
   expect_true(any(grepl("Indication on index date", result$variable_name)))
-  expect_true(any(grepl("Indication during prior 7 days", result$variable_name)))
-  expect_true(any(grepl("Indication during prior 30 days", result$variable_name)))
-  expect_true(any(grepl("Indication any time prior", result$variable_name)))
+  expect_true(any(grepl("Indication from 7 days before to the index date", result$variable_name)))
+  expect_true(any(grepl("Indication from 30 days before to the index date", result$variable_name)))
+  expect_true(any(grepl("Indication any time before or on index date", result$variable_name)))
 
   expect_identical(
-    "summarised_indication", unique(settings(result)$result_type))
+    "summarise_indication", unique(settings(result)$result_type)
+  )
 
+  mockDisconnect(cdm = cdm)
 })

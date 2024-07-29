@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of DrugUtilisation
 #
@@ -40,27 +40,27 @@ checkCdm <- function(cdm) {
   }
 }
 
-checkConceptSet <- function(conceptSet) {
+checkConceptSet <- function(conceptSet, call = parent.frame()) {
   errorMessage <- "conceptSet must be a uniquely named list of integerish,
   no NA are allowed"
   if (!is.list(conceptSet)) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
   if (!all(sapply(conceptSet, is.numeric))) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
   x <- unlist(conceptSet)
   if (any(is.na(x))) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
   if (any(abs(x - round(x)) > sqrt(.Machine$double.eps))) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
   if (length(names(x)) != length(x)) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
   if (length(names(x)) != length(unique(names(x)))) {
-    cli::cli_abort(errorMessage)
+    cli::cli_abort(errorMessage, call = call)
   }
 }
 
@@ -94,7 +94,8 @@ checkLimit <- function(limit) {
 
 checkPriorObservation <- function(priorObservation) {
   checkmate::assertIntegerish(
-    priorObservation, lower = 0, any.missing = F, len = 1,
+    priorObservation,
+    lower = 0, any.missing = F, len = 1,
   )
 }
 
@@ -212,8 +213,8 @@ checkTargetCohortName <- function(targetCohortName, cdm) {
   if (!(targetCohortName %in% names(cdm))) {
     cli::cli_abort("targetCohortName is not in the cdm reference")
   }
-  numberRows <- cdm[[targetCohortName]] %>%
-    dplyr::tally() %>%
+  numberRows <- cdm[[targetCohortName]] |>
+    dplyr::tally() |>
     dplyr::pull()
   if (numberRows == 0) {
     cli::cli_abort("targetCohort is empty")
@@ -249,7 +250,7 @@ checkEraJoinMode <- function(eraJoinMode) {
   errorMessage <- "eraJoinMode must be a choice between: 'previous', 'subsequent', 'zero' and 'join'"
   if (!is.character(eraJoinMode) | length(eraJoinMode) > 1) {
     cli::cli_abort(errorMessage)
-  } else{
+  } else {
     eraJoinMode <- tolower(eraJoinMode)
   }
   if (!(eraJoinMode %in% c("previous", "subsequent", "zero", "join"))) {
@@ -261,7 +262,7 @@ checkOverlapMode <- function(overlapMode) {
   errorMessage <- "overlapMode must be a choice between: 'previous', 'subsequent', 'minimum', 'maximum' and 'sum'"
   if (!is.character(overlapMode) | length(overlapMode) > 1) {
     cli::cli_abort(errorMessage)
-  } else{
+  } else {
     overlapMode <- tolower(overlapMode)
   }
   if (!(overlapMode %in% c("previous", "subsequent", "minimum", "maximum", "sum"))) {
@@ -273,7 +274,7 @@ checkSameIndexMode <- function(sameIndexMode) {
   errorMessage <- "sameIndexMode must be a choice between: 'minimum', 'maximum' and 'sum'"
   if (!is.character(sameIndexMode) | length(sameIndexMode) > 1) {
     cli::cli_abort(errorMessage)
-  }else{
+  } else {
     sameIndexMode <- tolower(sameIndexMode)
   }
   if (!(sameIndexMode %in% c("minimum", "maximum", "sum"))) {
@@ -288,11 +289,18 @@ checkIngredientConceptId <- function(ingredientConceptId, cdm) {
   if (!isInteger(ingredientConceptId)) {
     cli::cli_abort("ingredientConceptId is not an integer of length 1")
   }
-  if (cdm[["concept"]] %>%
-    dplyr::filter(.data$concept_id == .env$ingredientConceptId) %>%
+  if (cdm[["concept"]] |>
+    dplyr::filter(.data$concept_id == .env$ingredientConceptId) |>
     dplyr::pull("concept_class_id") != "Ingredient"
   ) {
     cli::cli_abort("ingredientConceptId is not found in vocabulary")
+  }
+}
+
+checkCohortId <- function(cohort, cohortId) {
+  checkmate::assertNumeric(cohortId, null.ok = T, min.len = 1)
+  if (!isTRUE(all(cohortId %in% (DrugUtilisation::cohortCount(cohort) |> dplyr::pull("cohort_definition_id"))))) {
+    cli::cli_abort("some of the cohortId specified not found in the cohort")
   }
 }
 
@@ -302,12 +310,15 @@ checkSample <- function(sample) {
   }
 }
 
-checkIndicationCohortName <- function(indicationCohortName, cdm) {
+checkIndicationCohortName <- function(indicationCohortName) {
   if (!is.character(indicationCohortName) & length(indicationCohortName) == 1) {
     cli::cli_abort("indicationCohortName must be a character of length 1.")
   }
-  if (!(indicationCohortName %in% names(cdm))) {
-    cli::cli_abort("indicationCohortName is not in the cdm reference")
+}
+
+checkName <- function(Name) {
+  if (!is.character(Name) & length(Name) == 1 & !is.null(Name)) {
+    cli::cli_abort("name must be a character of length 1.")
   }
 }
 
@@ -319,19 +330,16 @@ checkIndicationGap <- function(indicationGap) {
   if (sum(indicationGap < 0) > 0) {
     cli::cli_abort(errorMessage)
   }
-  if (!(lapply(indicationGap, isInteger) %>% unlist() %>% all())) {
+  if (!(lapply(indicationGap, isInteger) |> unlist() |> all())) {
     cli::cli_abort(errorMessage)
   }
 }
 
-checkUnknownIndicationTable <- function(unknownIndicationTable, cdm) {
+checkUnknownIndicationTable <- function(unknownIndicationTable) {
   if (!is.null(unknownIndicationTable)) {
     errorMessage <- "unknownIndicationTable must point to a table in the cdm"
     if (!is.character(unknownIndicationTable)) {
       cli::cli_abort(errorMessage)
-    }
-    if (!all(unknownIndicationTable %in% names(cdm))) {
-      cli::cli_abort("unknownIndicationTable is not in the cdm reference")
     }
   }
 }
@@ -344,11 +352,11 @@ checkIndicationVariables <- function(indicationVariables, cohort) {
   if (!all(indicationVariables %in% colnames(cohort))) {
     cli::cli_abort(errorMessage)
   }
-  cohort <- cohort %>%
-    dplyr::select(dplyr::all_of(indicationVariables)) %>%
-    utils::head(1) %>%
+  cohort <- cohort |>
+    dplyr::select(dplyr::all_of(indicationVariables)) |>
+    utils::head(1) |>
     dplyr::collect()
-  variableType <- PatientProfiles::variableTypes(cohort)$variable_type %>%
+  variableType <- PatientProfiles::variableTypes(cohort)$variable_type |>
     unique()
   if (!all(variableType %in% c("binary", "categorical", "numeric", "integer"))) {
     cli::cli_abort(
@@ -401,10 +409,6 @@ checkStrata <- function(strata, cohort) {
       cli::cli_abort(errorMessage)
     }
   }
-}
-
-checkMinCellCount <- function(minCellCount) {
-  checkmate::assertIntegerish(minCellCount, lower = 0, any.missing = F, len = 1)
 }
 
 checkOffset <- function(offset) {
@@ -578,20 +582,20 @@ checkTablesToCharacterize <- function(tablesToCharacterize, cdm) {
   }
 }
 
-checkDrugUseEstimates <- function(drugUseEstimates) {
-  choices <- PatientProfiles::availableEstimates(fullQuantiles = TRUE) %>%
-    dplyr::filter(.data$variable_type == "numeric") %>%
+checkEstimates <- function(estimates) {
+  choices <- PatientProfiles::availableEstimates(fullQuantiles = TRUE) |>
+    dplyr::filter(.data$variable_type == "numeric") |>
     dplyr::pull("estimate_name")
   errorMessage <- paste0(
-    "drugUseEstimates must be a subset of: ", paste0(choices, collapse = ", ")
+    "estimates must be a subset of: ", paste0(choices, collapse = ", ")
   )
-  if (!is.character(drugUseEstimates)) {
+  if (!is.character(estimates)) {
     cli::cli_abort(errorMessage)
   }
-  if (length(drugUseEstimates) != length(unique(drugUseEstimates))) {
+  if (length(estimates) != length(unique(estimates))) {
     cli::cli_abort(errorMessage)
   }
-  if (!all(drugUseEstimates %in% choices)) {
+  if (!all(estimates %in% choices)) {
     cli::cli_abort(errorMessage)
   }
 }

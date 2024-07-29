@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of DrugUtilisation
 #
@@ -14,335 +14,263 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Get indication for a target cohort
+#' Add a variable indicating individuals indications
 #'
-#' @param x Table in the cdm
-#' @param cdm A cdm reference created using CDMConnector
+#' @description
+#' Add a variable to a drug cohort indicating their presence in an indication
+#' cohort in a specified time window. If an individual is not in one of the
+#' indication cohorts, they will be considered to have an unknown indication if
+#' they are present in one of the specified OMOP CDM clinical tables. If they
+#' are neither in an indication cohort or a clinical table they will be
+#' considered as having no observed indication.
+#'
+#' @param cohort A cohort table in the cdm.
 #' @param indicationCohortName Name of indication cohort table
-#' @param indicationGap Gap between the event and the indication
+#' @param indicationCohortId target cohort Id to add indication
+#' @param indicationWindow time window of interests
 #' @param unknownIndicationTable Tables to search unknown indications
-#' @param indicationDate Date of the indication
+#' @param indexDate Date respect to indication will be calculated.
+#' @param censorDate After that day no indication will be considered.
+#' @param name name of permanant table
 #'
-#' @return Same cohort adding the indications
+#' @return The original table with a variable added that summarises the
+#' individual´s indications.
 #'
 #' @export
 #'
 #' @examples
 #' \donttest{
 #' library(DrugUtilisation)
-#' library(CodelistGenerator)
+#' library(CDMConnector)
+#' library(dplyr)
 #'
 #' cdm <- mockDrugUtilisation()
 #'
 #' indications <- list("headache" = 378253, "asthma" = 317009)
 #' cdm <- generateConceptCohortSet(
-#'   cdm, indications, "indication_cohorts"
+#'   cdm = cdm, conceptSet = indications, name = "indication_cohorts"
 #' )
 #'
-#' acetaminophen <- getDrugIngredientCodes(cdm, "acetaminophen")
-#' cdm <- generateDrugUtilisationCohortSet(cdm, "drug_cohort", acetaminophen)
+#' cdm <- generateIngredientCohortSet(
+#'   cdm = cdm, name = "drug_cohort",
+#'   ingredient = "acetaminophen"
+#' )
 #'
-#' cdm[["drug_cohort"]] %>%
-#'   addIndication(
-#'     indicationCohortName = "indication_cohorts",
-#'     indicationGap = c(0, 30, 365)
-#'   )
+#' cdm$drug_cohort |>
+#'   addIndication("indication_cohorts", indicationWindow = list(c(0, 0))) |>
+#'   glimpse()
 #' }
 #'
-addIndication <- function(x,
-                          cdm = lifecycle::deprecated(),
+addIndication <- function(cohort,
                           indicationCohortName,
-                          indicationGap = 0,
+                          indicationCohortId = NULL,
+                          indicationWindow = list(c(0, 0)),
                           unknownIndicationTable = NULL,
-                          indicationDate = "cohort_start_date") {
-  if (lifecycle::is_present(cdm)) {
-    lifecycle::deprecate_soft(
-      when = "0.5.0", what = "addIndication(cdm = )"
-    )
-  }
+                          indexDate = "cohort_start_date",
+                          censorDate = NULL,
+                          name = NULL) {
+  cdm <- omopgenerics::cdmReference(cohort)
 
-  cdm <- omopgenerics::cdmReference(x)
+  comp <- newTable(name)
 
   # check inputs
   checkInputs(
-    x = x, cdm = cdm, indicationCohortName = indicationCohortName,
-    indicationGap = indicationGap, indicationDate = indicationDate,
-    unknownIndicationTable = unknownIndicationTable
+    x = cohort, cdm = cdm, indicationCohortName = indicationCohortName,
+    indicationDate = indexDate, window = indicationWindow,
+    unknownIndicationTable = unknownIndicationTable, name = name
   )
 
-  # sort indicationGap
-  indicationGap <- sort(unique(indicationGap))
+  if (!(indicationCohortName %in% names(cdm))) {
+    cli::cli_abort("indicationCohortName is not in the cdm reference")
+  }
+
+  if (!all(unknownIndicationTable %in% names(cdm))) {
+    cli::cli_abort("unknownIndicationTable is not in the cdm reference")
+  }
+
+  assertNumeric(indicationCohortId, null = TRUE)
+
+  # indicationWindow as list
+  if (!inherits(indicationWindow, "list")) {
+    indicationWindow <- list(indicationWindow)
+  }
+
+  tmpName <- omopgenerics::uniqueTableName()
+
+  windowNames <- getWindowNames(indicationWindow) |> unlist()
+  names(indicationWindow) <- paste0("win", seq_along(indicationWindow))
 
   # select to interest individuals
-  ind <- x %>%
-    dplyr::select(
-      "subject_id", "cohort_start_date" = dplyr::all_of(indicationDate)
-    ) %>%
-    dplyr::distinct()
+  ind <- cohort |>
+    dplyr::select(dplyr::all_of(c("subject_id", censorDate, indexDate))) |>
+    dplyr::distinct() |>
+    PatientProfiles::addCohortIntersectFlag(
+      targetCohortTable = indicationCohortName,
+      indexDate = indexDate,
+      censorDate = censorDate,
+      targetStartDate = "cohort_start_date",
+      targetEndDate = NULL,
+      window = indicationWindow,
+      targetCohortId = indicationCohortId,
+      nameStyle = "i_{window_name}_{cohort_name}",
+      name = tmpName
+    ) |>
+    addUnknownIndication(
+      indexDate = indexDate, censorDate = censorDate,
+      window = indicationWindow, table = unknownIndicationTable,
+      name = tmpName
+    ) |>
+    dplyr::select(-dplyr::any_of(censorDate)) |>
+    collapseIndication(
+      window = indicationWindow,
+      name = tmpName,
+      unknown = length(unknownIndicationTable) > 0
+    ) |>
+    renameWindows(windowNames)
 
-  # add indications that are cohorts
-  ind <- addCohortIndication(ind, indicationCohortName, indicationGap)
-
-  # add unknown indications
-  ind <- addUnknownIndication(ind, unknownIndicationTable, indicationGap) %>%
-    dplyr::select(
-      "subject_id", "cohort_start_date", dplyr::starts_with(
-        paste0("indication_gap_", tolower(as.character(indicationGap)))
-      )
-    )
+  newCols <- colnames(ind)
+  newCols <- newCols[!newCols %in% c("subject_id", indexDate)]
+  toDrop <- intersect(newCols, colnames(cohort))
+  if (length(toDrop) > 0) {
+    cli::cli_warn("Overwriting existing variables: {toDrop}")
+    cohort <- cohort |>
+      dplyr::select(!dplyr::all_of(toDrop))
+  }
 
   # add the indication columns to the original table
-  result <- x %>%
-    dplyr::left_join(
-      ind %>% dplyr::rename(!!indicationDate := "cohort_start_date"),
-      by = c("subject_id", indicationDate)
-    ) %>%
-    dplyr::compute()
+  result <- cohort |>
+    dplyr::left_join(ind, by = c("subject_id", indexDate)) |>
+    dplyr::compute(name = comp$name, temporary = comp$temporary)
 
-  dropTmpTables(cdm = cdm)
+  omopgenerics::dropTable(cdm = cdm, name = tmpName)
 
   return(result)
 }
 
-#' get cohort names
-#' @noRd
-getCohortName <- function (name) {
-  name <- substr(name, 1, utils::tail(unlist(gregexpr('_', name)), n = 3) - 1)
-}
-
-#' get indication name from gap and termination
-#' @noRd
-indicationName <- function(gap, termination = "") {
-  paste0("indication_gap_", tolower(as.character(gap)), "_", termination)
-}
-
-#' Add cohort indications
-#' @noRd
-addCohortIndication <- function(ind, cohortName, gaps) {
-  for (gap in gaps) {
-    ind <- ind |>
-      PatientProfiles::addCohortIntersectFlag(
-        targetCohortTable = cohortName, targetEndDate = NULL,
-        window = c(-gap, 0), nameStyle = indicationName(gap, "{cohort_name}")
-      ) %>%
-      addNoneIndication(gap) %>%
-      dplyr::compute(
-        temporary = FALSE, overwrite = TRUE, name = uniqueTmpName()
-      )
-  }
-  return(ind)
-}
-
-#' Add unknown indications
-#' @noRd
-addUnknownIndication <- function(ind, unknownTables, gaps) {
-  if (!is.null(unknownTables)) {
-    individualsUnknown <- ind %>%
-      dplyr::filter(.data[[indicationName(min(gaps), "none")]] == 1) %>%
-      dplyr::select("subject_id", "cohort_start_date") %>%
-      dplyr::distinct() %>%
-      dplyr::compute(
-        temporary = FALSE, overwrite = TRUE, name = uniqueTmpName()
-      )
-    if (individualsUnknown %>% dplyr::tally() %>% dplyr::pull() > 0) {
-      cdm <- omopgenerics::cdmReference(ind)
-      for (ut in seq_along(unknownTables)) {
-        unknownDate <- PatientProfiles::startDateColumn(unknownTables[ut])
-        x <- cdm[[unknownTables[ut]]] %>%
-          dplyr::select(
-            "subject_id" = "person_id", "unknown_date" = !!unknownDate
-          ) %>%
-          dplyr::inner_join(individualsUnknown, by = "subject_id") %>%
-          dplyr::filter(.data$unknown_date <= .data$cohort_start_date)
-        if (ut == 1) {
-          xx <- x
-        } else {
-          xx <- dplyr::union_all(xx, x)
-        }
-      }
-      xx <- xx %>%
-        dplyr::group_by(.data$subject_id, .data$cohort_start_date) %>%
-        dplyr::summarise(
-          unknown_date = max(.data$unknown_date, na.rm = TRUE),
-          .groups = "drop"
-        ) %>%
-        dplyr::mutate(diff_date = !!CDMConnector::datediff(
-          "unknown_date", "cohort_start_date"
-        ))
-      for (gap in gaps) {
-        if (is.infinite(gap)) {
-          xx <- xx %>%
-            dplyr::mutate(indication_gap_inf_unknown = 1)
-        } else {
-          xx <- xx %>%
-            dplyr::mutate(!!indicationName(gap, "unknown") := dplyr::if_else(
-              .data$diff_date <= .env$gap, 1, 0
-            ))
-        }
-      }
-      xx <- xx %>%
-        dplyr::select(-"diff_date", -"unknown_date") %>%
-        dplyr::compute(
-          temporary = FALSE, overwrite = TRUE, name = uniqueTmpName()
-        )
-      ind <- ind %>%
-        dplyr::left_join(xx, by = c("subject_id", "cohort_start_date")) %>%
-        dplyr::mutate(dplyr::across(
-          dplyr::starts_with("indication_gap_"),
-          ~ dplyr::if_else(is.na(.), 0, .)
-        ))
-      for (gap in gaps) {
-        ind <- ind %>%
-          dplyr::mutate(!!indicationName(gap, "unknown") := dplyr::if_else(
-            .data[[indicationName(gap, "none")]] == 1 &
-              .data[[indicationName(gap, "unknown")]] == 1, 1, 0
-          )) %>%
-          dplyr::mutate(!!indicationName(gap, "none") := dplyr::if_else(
-            .data[[indicationName(gap, "none")]] == 1 &
-              .data[[indicationName(gap, "unknown")]] == 0, 1, 0
-          ))
-      }
-      ind <- ind %>%
-        dplyr::select(
-          "subject_id", "cohort_start_date", dplyr::starts_with("indication")
-        ) %>%
-        dplyr::compute(
-          temporary = FALSE, overwrite = TRUE, name = uniqueTmpName()
-        )
-    }
-  }
-  return(ind)
-}
-
-#' Sum columns
-#' @noRd
-addNoneIndication <- function(x, gap) {
-  columns <- colnames(x)
-  columns <- columns[grepl(indicationName(gap), columns)]
-  columns[grepl(".*\\s.*", columns)] <- paste0("`", columns[grepl(".*\\s.*", columns)],"`")
-  columns <- paste0(".data$", columns, collapse = " + ")
-  columns <- paste0("dplyr::if_else(", columns, " > 0, 0, 1)")
-  x %>%
-    dplyr::mutate(!!indicationName(gap, "none") := !!rlang::parse_expr(columns))
-}
-
-#' Create new variables summarising the data of indication that can be used as
-#' stratification columns
-#'
-#' @param cohort A cohort in the cdm
-#' @param indicationVariables Indication variables that we want to join
-#' @param keep Whether to keep the prior indication variables or not
-#'
-#' @return description The cohort with the new variable
-#'
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' library(DrugUtilisation)
-#'
-#' cdm <- mockDrugUtilisation()
-#' cdm[["cohort1"]] <- cdm[["cohort1"]] %>%
-#'   addIndication(indicationCohortName = "cohort2") %>%
-#'   indicationToStrata()
-#' }
-#'
-indicationToStrata <- function(cohort,
-                               indicationVariables = indicationColumns(cohort),
-                               keep = FALSE){
-  # check inputs
-  checkInputs(
-    cohort = cohort, indicationVariables = indicationVariables, keep = keep
-  )
-
-  # original cohort to keep attributes
-  originalCohort <- cohort
-
-  # organize indications
-  indications <- groupIndications(indicationVariables)
-
-  # combine each gap
-  for (k in seq_along(indications)) {
-    cohort <- cohort %>%
-      addBinaryFromCategorical(
-        binaryColumns = indications[[k]]$names,
-        newColumn = indications[[k]]$new_name, label = indications[[k]]$label
-      )
+addUnknownIndication <- function(x, indexDate, censorDate, window, table, name) {
+  if (length(table) == 0) {
+    return(x)
   }
 
-  # keep variables if asked to
-  if (!keep) {
-    cohort <- cohort %>%
-      dplyr::select(-dplyr::all_of(indicationVariables))
-  }
+  cdm <- omopgenerics::cdmReference(x)
+  q <- paste0("dplyr::if_all(dplyr::starts_with('", names(window), "'), ~ . == 0)", collapse = " | ") |>
+    rlang::parse_exprs()
 
-  return(cohort)
-}
+  tablePrefix <- omopgenerics::tmpPrefix()
 
-#' @noRd
-groupIndications <- function(indicationVariables) {
-  gaps <- gsub("indication_gap_", "", indicationVariables) %>%
-    strsplit("_") %>%
-    lapply(function(x){x[1]}) %>%
-    unlist() %>%
-    unique()
-  indications <- list()
-  for (k in seq_along(gaps)) {
-    indications[[k]] <- list()
-    name <- paste0("indication_gap_", gaps[k])
-    indications[[k]]$names <- indicationVariables[
-      grep(name, indicationVariables)
-    ]
-    indications[[k]]$new_name <- name
-    lab <- gsub(
-      paste0(name, "_"), "", indications[[k]]$names
+  xx <- x |>
+    dplyr::filter(!!!q) |>
+    dplyr::select(dplyr::any_of(c("subject_id", indexDate, censorDate))) |>
+    dplyr::compute(
+      name = omopgenerics::uniqueTableName(tablePrefix), temporary = FALSE
     )
-    indications[[k]]$label <- paste0(
-      toupper(substr(lab, 1, 1)), substr(lab, 2, nchar(lab))
-    ) %>%
-      gsub(pattern = "_", replacement = " ")
-  }
-  return(indications)
-}
 
-#' Get indication for a target cohort
-#'
-#' @param x Table in the cdm
-#' @param binaryColumns Binary columns to unite
-#' @param newColumn New column to be created from the binaryColumns
-#' @param label Label of each binary column
-#'
-#' @return Table x with a new column summarising the data from binaryColumns
-#'
-#' @noRd
-#'
-addBinaryFromCategorical <- function(x, binaryColumns, newColumn, label = binaryColumns) {
-  # initial checks
-  checkInputs(
-    x = x, binaryColumns = binaryColumns, newColumn = newColumn, label = label
+  for (tab in table) {
+    xx <- xx |>
+      PatientProfiles::addTableIntersectFlag(
+        indexDate = indexDate,
+        censorDate = censorDate,
+        tableName = tab,
+        targetEndDate = NULL,
+        window = window,
+        nameStyle = "unknown_{window_name}_{table_name}",
+        name = omopgenerics::uniqueTableName(tablePrefix)
+      )
+  }
+
+  qq <- paste0("dplyr::if_else(dplyr::if_any(dplyr::starts_with('unknown_", names(window), "')), 1L, 0L)") |>
+    rlang::parse_exprs() |>
+    rlang::set_names(paste0("i_", names(window), "_unknown"))
+
+  x <- x |>
+    dplyr::left_join(
+      xx |>
+        dplyr::mutate(!!!qq) |>
+        dplyr::select(!dplyr::starts_with("unknown_")),
+      by = c("subject_id", indexDate)
+    ) |>
+    dplyr::compute(name = name, temporary = FALSE)
+
+  omopgenerics::dropTable(
+    cdm = cdm, name = dplyr::starts_with(tablePrefix)
   )
 
-  toAdd <- x %>%
-    dplyr::select(dplyr::all_of(binaryColumns)) %>%
-    dplyr::distinct() %>%
-    dplyr::mutate(!!newColumn := "")
+  return(x)
+}
+collapseIndication <- function(x, window, name, unknown) {
+  indications <- colnames(x)
+  indications <- indications[startsWith(indications, "i_win1_")]
+  indications <- substr(indications, 8, nchar(indications))
+  indications <- indications[indications != "unknown"]
+  indications <- sort(indications)
 
-  for (k in seq_along(binaryColumns)) {
-    toAdd <- toAdd %>%
-      dplyr::mutate(!!newColumn := dplyr::if_else(
-        .data[[binaryColumns[k]]] == 1,
-        dplyr::if_else(
-          .data[[newColumn]] == "", !!label[k],
-          paste0(.data[[newColumn]], " and ", !!label[k])
-        ),
-        .data[[newColumn]]
-      ))
+  combs <- rep(list(c(1, 0)), length(indications))
+  names(combs) <- paste0("i_x1x_", indications)
+  combs <- tidyr::expand_grid(!!!combs)
+  xx <- character()
+  for (k in seq_len(nrow(combs) - 1)) {
+    cols <- combs[k, ] |>
+      as.list() |>
+      unlist()
+    nms <- names(cols)[cols == 1]
+    vals <- paste0(".data[['", nms, "']] == 1", collapse = " & ")
+    nms <- substr(nms, 7, nchar(nms)) |>
+      tolower() |>
+      paste0(collapse = " and ")
+    val <- paste0(vals, " ~ '", nms, "'")
+    xx <- c(xx, val)
   }
+  if (unknown) xx <- c(xx, ".data[['i_x1x_unknown']] == 1 ~ 'unknown'")
+  xx <- paste0(xx, collapse = ", ")
 
-  # mantain the number of columns
-  x <- x %>%
-    dplyr::left_join(toAdd, by = binaryColumns) %>%
-    dplyr::compute()
+  q <- character()
+  nms <- character()
+  for (win in seq_along(window)) {
+    q <- c(q, paste0(
+      "dplyr::case_when(",
+      gsub("_x1x_", paste0("_win", win, "_"), xx),
+      ", .default = 'none')"
+    ))
+    nms <- c(nms, paste0("indication_win", win))
+  }
+  q <- q |>
+    rlang::parse_exprs() |>
+    rlang::set_names(nms)
 
+  x <- x |>
+    dplyr::mutate(!!!q) |>
+    dplyr::select(!dplyr::starts_with("i_")) |>
+    dplyr::compute(name = name, temporary = FALSE)
+
+  return(x)
+}
+renameWindows <- function(x, windowNames) {
+  cols <- paste0("indication_win", seq_along(windowNames))
+  names(cols) <- paste0("indication_", windowNames)
+  x <- x |>
+    dplyr::rename(!!cols)
+}
+getWindowNames <- function(window) {
+  getname <- function(element) {
+    element <- tolower(as.character(element))
+    element <- gsub("-", "m", element)
+    invisible(paste0(element[1], "_to_", element[2]))
+  }
+  windowNames <- names(window)
+  if (is.null(windowNames)) {
+    windowNames <- lapply(window, getname)
+  } else {
+    id <- windowNames == ""
+    windowNames[id] <- lapply(window[id], getname)
+  }
+  invisible(windowNames)
+}
+newTable <- function(name, call = parent.frame()) {
+  assertCharacter(name, length = 1, null = TRUE, na = TRUE, call = call)
+  if (is.null(name) || is.na(name)) {
+    x <- list(name = omopgenerics::uniqueTableName(), temporary = TRUE)
+  } else {
+    x <- list(name = name, temporary = FALSE)
+  }
   return(x)
 }

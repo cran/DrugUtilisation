@@ -2,63 +2,76 @@
 % Please edit documentation in R/summariseIndication.R
 \name{summariseIndication}
 \alias{summariseIndication}
-\title{This function is used to summarise the indication table over multiple
-cohorts.}
+\title{Summarise the indications of individuals in a drug cohort}
 \usage{
 summariseIndication(
   cohort,
-  cdm = lifecycle::deprecated(),
   strata = list(),
-  minCellCount = lifecycle::deprecated()
+  indicationCohortName,
+  indicationCohortId = NULL,
+  indicationWindow = list(c(0, 0)),
+  unknownIndicationTable = NULL,
+  indexDate = "cohort_start_date",
+  censorDate = NULL
 )
 }
 \arguments{
-\item{cohort}{Cohort with indications and strata}
+\item{cohort}{A cohort table in a cdm reference.}
 
-\item{cdm}{cdm_reference created by CDMConnector}
+\item{strata}{List of variables to stratify results by. These variables
+must be present in the cohort table.}
 
-\item{strata}{Stratification list}
+\item{indicationCohortName}{Name of the cohort table with potential
+indications.}
 
-\item{minCellCount}{Minimum counts that a group can have. Cohorts with
-less counts than this value are obscured.}
+\item{indicationCohortId}{The target cohort ID to add indication. If NULL all
+cohorts will be considered.}
+
+\item{indicationWindow}{The time window over which to identify indications.}
+
+\item{unknownIndicationTable}{Tables in the OMOP CDM to search for unknown
+indications.}
+
+\item{indexDate}{A date variable in the cohort table for which indications
+will be found relative to.}
+
+\item{censorDate}{After that day no indication will be considered.}
 }
 \value{
-A Tibble with 4 columns: cohort_definition_id, variable, estimate and
-value. There will be one row for each cohort, variable and cohort
-combination.
+A summarised result
 }
 \description{
-This function is used to summarise the indication table over multiple
-cohorts.
+Summarise the observed indications of patients in a drug cohort based on
+their presence in an indication cohort in a specified time window. If an
+individual is not in one of the indication cohorts, they will be considered
+to have an unknown indication if they are present in one of the specified
+OMOP CDM clinical tables. Otherwise, if they  are neither in an indication
+cohort or a clinical table they will be considered as having no observed
+indication.
 }
 \examples{
 \donttest{
 library(DrugUtilisation)
-library(PatientProfiles)
-library(CodelistGenerator)
+library(CDMConnector)
+library(dplyr)
 
 cdm <- mockDrugUtilisation()
+
 indications <- list("headache" = 378253, "asthma" = 317009)
 cdm <- generateConceptCohortSet(cdm, indications, "indication_cohorts")
-acetaminophen <- getDrugIngredientCodes(cdm, "acetaminophen")
-cdm <- generateDrugUtilisationCohortSet(cdm, "drug_cohort", acetaminophen)
-cdm[["drug_cohort"]] <- cdm[["drug_cohort"]] \%>\%
-  addIndication(
-    indicationCohortName = "indication_cohorts",
-    indicationGap = c(0, 30, 365)
-  )
 
-summariseIndication(cdm[["drug_cohort"]])
-
-cdm[["drug_cohort"]] <- cdm[["drug_cohort"]] \%>\%
-  addAge(ageGroup = list("<40" = c(0, 39), ">=40" = c(40, 150))) \%>\%
-  addSex()
-
-summariseIndication(
-  cdm[["drug_cohort"]], strata = list(
-    "age_group" = "age_group", "age_group and sex" = c("age_group", "sex")
-  )
+cdm <- generateIngredientCohortSet(
+  cdm = cdm, name = "drug_cohort",
+  ingredient = "acetaminophen"
 )
+
+cdm$drug_cohort |>
+  summariseIndication(
+    indicationCohortName = "indication_cohorts",
+    unknownIndicationTable = "condition_occurrence",
+    indicationWindow = list(c(-Inf, 0))
+  ) |>
+  glimpse()
 }
 
 }

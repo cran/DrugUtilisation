@@ -2,56 +2,69 @@
 % Please edit documentation in R/addIndication.R
 \name{addIndication}
 \alias{addIndication}
-\title{Get indication for a target cohort}
+\title{Add a variable indicating individuals indications}
 \usage{
 addIndication(
-  x,
-  cdm = lifecycle::deprecated(),
+  cohort,
   indicationCohortName,
-  indicationGap = 0,
+  indicationCohortId = NULL,
+  indicationWindow = list(c(0, 0)),
   unknownIndicationTable = NULL,
-  indicationDate = "cohort_start_date"
+  indexDate = "cohort_start_date",
+  censorDate = NULL,
+  name = NULL
 )
 }
 \arguments{
-\item{x}{Table in the cdm}
-
-\item{cdm}{A cdm reference created using CDMConnector}
+\item{cohort}{A cohort table in the cdm.}
 
 \item{indicationCohortName}{Name of indication cohort table}
 
-\item{indicationGap}{Gap between the event and the indication}
+\item{indicationCohortId}{target cohort Id to add indication}
+
+\item{indicationWindow}{time window of interests}
 
 \item{unknownIndicationTable}{Tables to search unknown indications}
 
-\item{indicationDate}{Date of the indication}
+\item{indexDate}{Date respect to indication will be calculated.}
+
+\item{censorDate}{After that day no indication will be considered.}
+
+\item{name}{name of permanant table}
 }
 \value{
-Same cohort adding the indications
+The original table with a variable added that summarises the
+individual´s indications.
 }
 \description{
-Get indication for a target cohort
+Add a variable to a drug cohort indicating their presence in an indication
+cohort in a specified time window. If an individual is not in one of the
+indication cohorts, they will be considered to have an unknown indication if
+they are present in one of the specified OMOP CDM clinical tables. If they
+are neither in an indication cohort or a clinical table they will be
+considered as having no observed indication.
 }
 \examples{
 \donttest{
 library(DrugUtilisation)
-library(CodelistGenerator)
+library(CDMConnector)
+library(dplyr)
 
 cdm <- mockDrugUtilisation()
 
 indications <- list("headache" = 378253, "asthma" = 317009)
 cdm <- generateConceptCohortSet(
-  cdm, indications, "indication_cohorts"
+  cdm = cdm, conceptSet = indications, name = "indication_cohorts"
 )
 
-acetaminophen <- getDrugIngredientCodes(cdm, "acetaminophen")
-cdm <- generateDrugUtilisationCohortSet(cdm, "drug_cohort", acetaminophen)
+cdm <- generateIngredientCohortSet(
+  cdm = cdm, name = "drug_cohort",
+  ingredient = "acetaminophen"
+)
 
-cdm[["drug_cohort"]] \%>\%
-  addIndication(
-    indicationCohortName = "indication_cohorts",
-    indicationGap = c(0, 30, 365)
-  )
+cdm$drug_cohort |>
+  addIndication("indication_cohorts", indicationWindow = list(c(0, 0))) |>
+  glimpse()
 }
 
 }
