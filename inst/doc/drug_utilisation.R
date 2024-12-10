@@ -54,7 +54,7 @@ cohort |>
 #    gapEra = 1,
 #    numberExposures = TRUE,
 #    numberEras = TRUE,
-#    exposedTime = TRUE,
+#    daysExposed = TRUE,
 #    timeToExposure = TRUE,
 #    initialQuantity = TRUE,
 #    cumulativeQuantity = TRUE,
@@ -78,7 +78,7 @@ cdm$drug_utilisation_example <- cdm$cohort1 |>
     gapEra = 7,
     numberExposures = FALSE,
     numberEras = FALSE,
-    exposedTime = FALSE,
+    daysExposed = FALSE,
     timeToExposure = FALSE,
     initialQuantity = TRUE,
     cumulativeQuantity = TRUE,
@@ -107,8 +107,9 @@ duResults <- summariseDrugUtilisation(
   gapEra = 7,
   numberExposures = TRUE,
   numberEras = TRUE,
-  exposedTime = TRUE,
+  daysExposed = TRUE,
   timeToExposure = TRUE,
+  initialExposureDuration = TRUE,
   initialQuantity = TRUE,
   cumulativeQuantity = TRUE,
   initialDailyDose = TRUE,
@@ -140,7 +141,7 @@ duResults <- cdm$cohort1 |>
     gapEra = 7,
     numberExposures = TRUE,
     numberEras = TRUE,
-    exposedTime = TRUE,
+    daysExposed = TRUE,
     timeToExposure = TRUE,
     initialQuantity = TRUE,
     cumulativeQuantity = TRUE,
@@ -153,22 +154,4 @@ duResults |>
 
 ## ----eval = TRUE--------------------------------------------------------------
 tableDrugUtilisation(duResults)
-
-## ----eval = TRUE--------------------------------------------------------------
-tableDrugUtilisation(
-  duResults,
-  header = c("group", "estimate"),
-  splitStrata = FALSE,
-  cohortName = TRUE,
-  cdmName = FALSE,
-  conceptSet = TRUE,
-  ingredient = TRUE,
-  groupColumn = list("Strata" = c("strata_name", "strata_level")),
-  type = "flextable",
-  formatEstimateName = c(
-    `Missing, N (%)` = "<count_missing> (<percentage_missing> %)",
-    N = "<count>",
-    `Non-missing, Mean (SD)` = "<mean> (<sd>)"
-  )
-)
 

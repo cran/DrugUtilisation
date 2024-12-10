@@ -1,7 +1,7 @@
 Package: DrugUtilisation
 Title: Summarise Patient-Level Drug Utilisation in Data Mapped to the
         OMOP Common Data Model
-Version: 0.7.1
+Version: 0.8.0
 Authors@R: c(
     person(
         "Martí", "Català", email = "marti.catalasabate@ndorms.ox.ac.uk", 
@@ -51,19 +51,20 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 Suggests: covr, testthat (>= 3.1.5), odbc, CohortSurvival, here,
         RPostgres, duckdb, knitr, rmarkdown, ggplot2, tibble, gt,
-        flextable, ggtext, scales, tictoc, DBI
+        flextable, ggtext, scales, DBI, bit64, visOmopResults (>=
+        0.5.0)
 Config/testthat/edition: 3
-Imports: CDMConnector (>= 1.4.0), CodelistGenerator (>= 3.1.0),
-        checkmate, dbplyr, dplyr, glue, clock, tidyr, rlang, cli,
-        PatientProfiles (>= 1.0.0), purrr, omopgenerics (>= 0.2.3),
-        visOmopResults, lifecycle, stringr
+Imports: CDMConnector (>= 1.4.0), CodelistGenerator (>= 3.1.0), dplyr,
+        glue, clock, tidyr, rlang, cli, PatientProfiles (>= 1.0.0),
+        purrr, omopgenerics (>= 0.4.0), lifecycle, stringr
 Depends: R (>= 2.10)
 LazyData: true
-URL: https://darwin-eu-dev.github.io/DrugUtilisation/
+URL: https://darwin-eu.github.io/DrugUtilisation/
+BugReports: https://github.com/darwin-eu/DrugUtilisation/issues
 Config/testthat/parallel: true
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-09-05 16:57:34 UTC; martics
+Packaged: 2024-12-09 23:51:05 UTC; martics
 Author: Martí Català [aut, cre] (<https://orcid.org/0000-0003-3308-9905>),
   Mike Du [ctb] (<https://orcid.org/0000-0002-9517-8834>),
   Yuchen Guo [aut] (<https://orcid.org/0000-0002-0847-4855>),
@@ -75,4 +76,4 @@ Author: Martí Català [aut, cre] (<https://orcid.org/0000-0003-3308-9905>),
   Xihang Chen [aut] (<https://orcid.org/0009-0001-8112-8959>)
 Maintainer: Martí Català <marti.catalasabate@ndorms.ox.ac.uk>
 Repository: CRAN
-Date/Publication: 2024-09-06 14:30:22 UTC
+Date/Publication: 2024-12-10 03:20:02 UTC

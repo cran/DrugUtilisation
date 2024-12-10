@@ -40,9 +40,7 @@ test_that("test case single indication", {
     observation_period_start_date = as.Date(c(
       "2015-01-01", "2016-05-15", "2012-12-30"
     )),
-    observation_period_end_date = as.Date(c(
-      "2025-01-01", "2026-05-15", "2030-12-30"
-    )),
+    observation_period_end_date = as.Date("2024-01-01"),
     period_type_concept_id = 44814724
   )
   condition_occurrence <- dplyr::tibble(
@@ -93,14 +91,13 @@ test_that("test case single indication", {
     ))
   expect_true("a" %in% colnames(cdm$new))
 
-
-
   # check for indication 0
   res0 <- cdm[["cohort1"]] |>
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(0, 0)),
       unknownIndicationTable = NULL
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_0_to_0") %in%
@@ -123,13 +120,13 @@ test_that("test case single indication", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(-1, 0)),
       unknownIndicationTable = NULL
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_m1_to_0") %in%
       setdiff(colnames(res1), colnames(cdm[["cohort1"]]))
   ))
-
 
   expect_true(
     res1 |>
@@ -147,7 +144,8 @@ test_that("test case single indication", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(-2, 0)),
       unknownIndicationTable = NULL
-    )
+    ) |>
+    dplyr::collect()
 
   expect_true(length(setdiff(colnames(res2), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
@@ -172,7 +170,8 @@ test_that("test case single indication", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(-Inf, 0)),
       unknownIndicationTable = NULL
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(resinf), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_minf_to_0") %in%
@@ -238,9 +237,7 @@ test_that("test case single indication with unknown indication table", {
     observation_period_start_date = as.Date(c(
       "2015-01-01", "2016-05-15", "2012-12-30"
     )),
-    observation_period_end_date = as.Date(c(
-      "2025-01-01", "2026-05-15", "2030-12-30"
-    )),
+    observation_period_end_date = as.Date("2024-01-01"),
     period_type_concept_id = 44814724
   )
   cdm <- mockDrugUtilisation(
@@ -256,7 +253,8 @@ test_that("test case single indication with unknown indication table", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(0, 0)),
       unknownIndicationTable = "condition_occurrence"
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res0), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_0_to_0") %in%
@@ -275,7 +273,8 @@ test_that("test case single indication with unknown indication table", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(-1, 0)),
       unknownIndicationTable = "condition_occurrence"
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res1), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_m1_to_0") %in%
@@ -294,7 +293,8 @@ test_that("test case single indication with unknown indication table", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(-6, 0)),
       unknownIndicationTable = "condition_occurrence"
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res6), colnames(cdm[["cohort1"]]))) == 1)
   expect_true(all(
     c("indication_m6_to_0") %in%
@@ -313,7 +313,8 @@ test_that("test case single indication with unknown indication table", {
     addIndication(
       indicationCohortName = "cohort2", indicationWindow = list(c(0, 0), c(-1, 0), c(-6, 0)),
       unknownIndicationTable = "condition_occurrence"
-    )
+    ) |>
+    dplyr::collect()
   expect_true(length(setdiff(colnames(res016), colnames(cdm[["cohort1"]]))) == 3)
   expect_true(all(
     c(
@@ -354,7 +355,8 @@ test_that("test case single indication with unknown indication table", {
       addIndication(
         indicationCohortName = "cohort2", indicationWindow = list(c(0, 0), c(-1, 0), c(-6, 0)),
         unknownIndicationTable = c("condition_occurrence", "drug_exposure", "observation")
-      )
+      ) |>
+      dplyr::collect()
   )
 
   mockDisconnect(cdm = cdm)
@@ -400,9 +402,7 @@ test_that("test indicationDate", {
     observation_period_start_date = as.Date(c(
       "2015-01-01", "2016-05-15", "2012-12-30"
     )),
-    observation_period_end_date = as.Date(c(
-      "2025-01-01", "2026-05-15", "2030-12-30"
-    )),
+    observation_period_end_date = as.Date("2024-01-01"),
     period_type_concept_id = 44814724
   )
 
@@ -421,7 +421,8 @@ test_that("test indicationDate", {
     addIndication(
       indicationCohortName = "cohort2",
       indicationWindow = list(c(0, 0), c(-1, 0), c(-2, 0), c(-Inf, 0)), unknownIndicationTable = NULL
-    )
+    ) |>
+    dplyr::collect()
   expect_equal(
     sort(setdiff(colnames(res012inf), colnames(cdm[["cohort1"]]))),
     sort(c(
@@ -438,7 +439,8 @@ test_that("test indicationDate", {
       indicationCohortName = "cohort2",
       indicationWindow = list(c(0, 0), c(-1, 0), c(-2, 0), c(-Inf, 0)), unknownIndicationTable = NULL,
       indexDate = "start_date"
-    )
+    ) |>
+    dplyr::collect()
   expect_equal(
     sort(setdiff(colnames(res012infS), colnames(cdm[["cohort1"]]))),
     sort(c(
@@ -517,9 +519,7 @@ test_that("test attributes", {
     observation_period_start_date = as.Date(c(
       "2015-01-01", "2016-05-15", "2012-12-30"
     )),
-    observation_period_end_date = as.Date(c(
-      "2025-01-01", "2026-05-15", "2030-12-30"
-    )),
+    observation_period_end_date = as.Date("2024-01-01"),
     period_type_concept_id = 44814724
   )
   cdm <-
@@ -590,9 +590,7 @@ test_that("summariseIndication", {
     observation_period_start_date = as.Date(c(
       "2015-01-01", "2016-05-15", "2012-12-30"
     )),
-    observation_period_end_date = as.Date(c(
-      "2025-01-01", "2026-05-15", "2030-12-30"
-    )),
+    observation_period_end_date = as.Date("2024-01-01"),
     period_type_concept_id = 44814724
   )
   cdm <-
