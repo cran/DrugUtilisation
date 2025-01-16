@@ -1,5 +1,10 @@
+# DrugUtilisation 0.8.2
+
+* Fix snowflake edge case with duplicated prescriptions by @catalamarti
+
 # DrugUtilisation 0.8.1
 
+* Arguments recorded in summarise* functions by @catalamarti
 * Improved performance of addIndication, addTreatment, summariseIndication, summariseTreatment by @catalamarti
 
 # DrugUtilisation 0.8.0
