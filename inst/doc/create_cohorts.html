@@ -446,12 +446,11 @@ can be very useful to create conceptSet.</p>
 <p>We could also use the function <code>codesFromConceptSet()</code> to
 read a concept set from a json file:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>codes <span class="ot">&lt;-</span> <span class="fu">codesFromConceptSet</span>(<span class="at">path =</span> <span class="fu">system.file</span>(<span class="st">&quot;acetaminophen.json&quot;</span>, <span class="at">package =</span> <span class="st">&quot;DrugUtilisation&quot;</span>), <span class="at">cdm =</span> cdm)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; Warning: ! `codelist` casted to integers.</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>codes</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; ── 1 codelist ──────────────────────────────────────────────────────────────────</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; - acetaminophen (4 codes)</span></span></code></pre></div>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>codes</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; ── 1 codelist ──────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; - acetaminophen (4 codes)</span></span></code></pre></div>
 </div>
 <div id="the-gapera-parameter" class="section level2">
 <h2>The gapEra parameter</h2>
@@ -521,7 +520,7 @@ into a single exposure as the records overlap each other:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>cdm<span class="sc">$</span>drug_exposure <span class="sc">|&gt;</span></span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(drug_concept_id <span class="sc">%in%</span> <span class="sc">!!</span>codes<span class="sc">$</span>acetaminophen <span class="sc">&amp;</span> person_id <span class="sc">==</span> <span class="dv">69</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 23]</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt;   drug_exposure_id person_id drug_concept_id drug_exposure_start_date</span></span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;              &lt;int&gt;     &lt;int&gt;           &lt;int&gt; &lt;date&gt;                  </span></span>
 <span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; 1              201        69         2905077 2002-01-29              </span></span>
@@ -538,7 +537,7 @@ into a single exposure as the records overlap each other:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(subject_id <span class="sc">==</span> <span class="dv">69</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 4]</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; 1                    1         69 2001-03-04        2004-06-02</span></span></code></pre></div>
@@ -555,7 +554,7 @@ attrition:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>cdm<span class="sc">$</span>drug_exposure <span class="sc">|&gt;</span></span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(drug_concept_id <span class="sc">%in%</span> <span class="sc">!!</span>codes<span class="sc">$</span>acetaminophen <span class="sc">&amp;</span> person_id <span class="sc">==</span> <span class="dv">50</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 23]</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;   drug_exposure_id person_id drug_concept_id drug_exposure_start_date</span></span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;              &lt;int&gt;     &lt;int&gt;           &lt;int&gt; &lt;date&gt;                  </span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 1              143        50         1125360 2017-04-14              </span></span>
@@ -574,7 +573,7 @@ different episodes.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(subject_id <span class="sc">==</span> <span class="dv">50</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 4]</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; 1                    1         50 2017-04-01        2017-04-23</span></span></code></pre></div>
@@ -626,13 +625,13 @@ would restrict to individuals with 365 days of no exposure:</p>
 criteria:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
 <span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         42 2002-09-15        2007-12-19     </span></span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         23 2003-10-29        2003-11-27     </span></span>
-<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         33 2021-02-12        2021-02-14     </span></span>
-<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         14 1990-04-27        1990-05-12     </span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         33 2021-02-12        2021-02-14     </span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         14 1990-04-27        1990-05-12     </span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         23 2003-10-29        2003-11-27     </span></span>
 <span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         77 1966-09-15        1966-12-27     </span></span>
 <span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="co">#&gt;  6                    1          9 2016-03-17        2016-09-02     </span></span>
 <span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         47 1963-12-22        1965-09-16     </span></span>
@@ -727,7 +726,7 @@ function. See example:</p>
 criteria:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
 <span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="co">#&gt;  1                    1          7 1969-09-09        1970-02-14     </span></span>
@@ -737,9 +736,9 @@ criteria:</p>
 <span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         72 2009-12-10        2010-03-30     </span></span>
 <span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         77 1966-09-15        1966-12-27     </span></span>
 <span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         80 2022-08-25        2022-09-06     </span></span>
-<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         13 1981-07-11        1981-09-06     </span></span>
-<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         29 2020-12-08        2021-01-09     </span></span>
-<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         97 1991-02-09        1991-10-07     </span></span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         39 2022-02-09        2022-06-11     </span></span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         45 2017-07-03        2018-07-06     </span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         75 2010-06-16        2011-09-20     </span></span>
 <span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
@@ -777,19 +776,19 @@ prior observation we can use the
 criteria:</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
 <span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a><span class="co">#&gt;  1                    1          7 1969-09-09        1970-02-14     </span></span>
 <span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         35 2005-11-10        2006-09-09     </span></span>
 <span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         58 1995-08-29        2002-06-12     </span></span>
 <span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         62 2005-01-24        2006-12-05     </span></span>
-<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         29 2020-12-08        2021-01-09     </span></span>
-<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         97 1991-02-09        1991-10-07     </span></span>
-<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a><span class="co">#&gt;  7                    1          8 2019-09-14        2020-12-31     </span></span>
-<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         17 2000-08-24        2003-02-19     </span></span>
-<span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         36 2018-06-17        2018-10-24     </span></span>
-<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         46 2004-06-27        2011-05-07     </span></span>
+<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         45 2017-07-03        2018-07-06     </span></span>
+<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         75 2010-06-16        2011-09-20     </span></span>
+<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         29 2020-12-08        2021-01-09     </span></span>
+<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         97 1991-02-09        1991-10-07     </span></span>
+<span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         96 2011-05-25        2013-01-23     </span></span>
+<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         14 1990-04-27        1990-05-12     </span></span>
 <span id="cb30-16"><a href="#cb30-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
@@ -835,19 +834,19 @@ date. See example:</p>
 criteria:</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
 <span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         35 2005-11-10        2006-09-09     </span></span>
 <span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         62 2005-01-24        2006-12-05     </span></span>
-<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         29 2020-12-08        2021-01-09     </span></span>
-<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a><span class="co">#&gt;  4                    1          8 2019-09-14        2020-12-31     </span></span>
-<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         17 2000-08-24        2003-02-19     </span></span>
-<span id="cb35-11"><a href="#cb35-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         36 2018-06-17        2018-10-24     </span></span>
-<span id="cb35-12"><a href="#cb35-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         46 2004-06-27        2011-05-07     </span></span>
-<span id="cb35-13"><a href="#cb35-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         57 2020-04-17        2020-11-19     </span></span>
-<span id="cb35-14"><a href="#cb35-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         87 2020-10-02        2021-01-02     </span></span>
-<span id="cb35-15"><a href="#cb35-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         44 2017-01-01        2018-03-30     </span></span>
+<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         45 2017-07-03        2018-07-06     </span></span>
+<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         75 2010-06-16        2011-09-20     </span></span>
+<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         29 2020-12-08        2021-01-09     </span></span>
+<span id="cb35-11"><a href="#cb35-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         96 2011-05-25        2013-01-23     </span></span>
+<span id="cb35-12"><a href="#cb35-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         23 2003-10-29        2003-11-27     </span></span>
+<span id="cb35-13"><a href="#cb35-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         93 2014-01-09        2016-06-21     </span></span>
+<span id="cb35-14"><a href="#cb35-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb35-15"><a href="#cb35-15" tabindex="-1"></a><span class="co">#&gt; 10                    1          8 2019-09-14        2020-12-31     </span></span>
 <span id="cb35-16"><a href="#cb35-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
