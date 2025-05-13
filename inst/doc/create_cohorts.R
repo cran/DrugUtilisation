@@ -171,6 +171,23 @@ cohortCount(cdm$acetaminophen_cohort)
 cohortCodelist(cdm$acetaminophen_cohort, cohortId = 1)
 
 ## -----------------------------------------------------------------------------
+cdm <- generateAtcCohortSet(
+  cdm = cdm,
+  atcName = "alimentary tract and metabolism",
+  name = "atc_cohort"
+)
+settings(cdm$atc_cohort)
+
+## -----------------------------------------------------------------------------
+cdm <- generateIngredientCohortSet(
+  cdm = cdm,
+  ingredient = c('simvastatin', 'metformin'),
+  name = "ingredient_cohort",
+  ingredientRange = c(1, 1)
+)
+settings(cdm$ingredient_cohort)
+
+## -----------------------------------------------------------------------------
 cdm$acetaminophen_cohort <- cdm$acetaminophen_cohort |>
   requirePriorDrugWashout(days = 365)
 

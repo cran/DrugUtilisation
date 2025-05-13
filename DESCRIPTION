@@ -1,7 +1,7 @@
 Package: DrugUtilisation
 Title: Summarise Patient-Level Drug Utilisation in Data Mapped to the
         OMOP Common Data Model
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person(
         "Martí", "Català", email = "marti.catalasabate@ndorms.ox.ac.uk", 
@@ -63,16 +63,19 @@ BugReports: https://github.com/darwin-eu/DrugUtilisation/issues
 Config/testthat/parallel: true
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-04-15 23:00:56 UTC; martics
-Author: Martí Català [aut, cre] (<https://orcid.org/0000-0003-3308-9905>),
-  Mike Du [ctb] (<https://orcid.org/0000-0002-9517-8834>),
-  Yuchen Guo [aut] (<https://orcid.org/0000-0002-0847-4855>),
-  Kim Lopez-Guell [aut] (<https://orcid.org/0000-0002-8462-8668>),
-  Edward Burn [aut] (<https://orcid.org/0000-0002-9286-1128>),
-  Xintong Li [ctb] (<https://orcid.org/0000-0002-6872-5804>),
-  Marta Alcalde-Herraiz [ctb] (<https://orcid.org/0009-0002-4405-1814>),
-  Nuria Mercade-Besora [aut] (<https://orcid.org/0009-0006-7948-3747>),
-  Xihang Chen [aut] (<https://orcid.org/0009-0001-8112-8959>)
+Packaged: 2025-05-13 20:39:39 UTC; martics
+Author: Martí Català [aut, cre] (ORCID:
+    <https://orcid.org/0000-0003-3308-9905>),
+  Mike Du [ctb] (ORCID: <https://orcid.org/0000-0002-9517-8834>),
+  Yuchen Guo [aut] (ORCID: <https://orcid.org/0000-0002-0847-4855>),
+  Kim Lopez-Guell [aut] (ORCID: <https://orcid.org/0000-0002-8462-8668>),
+  Edward Burn [aut] (ORCID: <https://orcid.org/0000-0002-9286-1128>),
+  Xintong Li [ctb] (ORCID: <https://orcid.org/0000-0002-6872-5804>),
+  Marta Alcalde-Herraiz [ctb] (ORCID:
+    <https://orcid.org/0009-0002-4405-1814>),
+  Nuria Mercade-Besora [aut] (ORCID:
+    <https://orcid.org/0009-0006-7948-3747>),
+  Xihang Chen [aut] (ORCID: <https://orcid.org/0009-0001-8112-8959>)
 Maintainer: Martí Català <marti.catalasabate@ndorms.ox.ac.uk>
 Repository: CRAN
-Date/Publication: 2025-04-15 23:30:05 UTC
+Date/Publication: 2025-05-13 21:20:02 UTC

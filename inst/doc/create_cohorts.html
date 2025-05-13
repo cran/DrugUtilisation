@@ -520,13 +520,13 @@ into a single exposure as the records overlap each other:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>cdm<span class="sc">$</span>drug_exposure <span class="sc">|&gt;</span></span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(drug_concept_id <span class="sc">%in%</span> <span class="sc">!!</span>codes<span class="sc">$</span>acetaminophen <span class="sc">&amp;</span> person_id <span class="sc">==</span> <span class="dv">69</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 23]</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt;   drug_exposure_id person_id drug_concept_id drug_exposure_start_date</span></span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;              &lt;int&gt;     &lt;int&gt;           &lt;int&gt; &lt;date&gt;                  </span></span>
 <span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; 1              201        69         2905077 2002-01-29              </span></span>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; 2              203        69         2905077 2001-04-23              </span></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; 3              204        69        43135274 2003-10-16              </span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; 4              205        69         2905077 2001-03-04              </span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; 3              205        69         2905077 2001-03-04              </span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; 4              204        69        43135274 2003-10-16              </span></span>
 <span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; # ℹ 19 more variables: drug_exposure_end_date &lt;date&gt;,</span></span>
 <span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt; #   drug_type_concept_id &lt;int&gt;, quantity &lt;dbl&gt;,</span></span>
 <span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; #   drug_exposure_start_datetime &lt;date&gt;, drug_exposure_end_datetime &lt;date&gt;,</span></span>
@@ -537,7 +537,7 @@ into a single exposure as the records overlap each other:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(subject_id <span class="sc">==</span> <span class="dv">69</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 4]</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; 1                    1         69 2001-03-04        2004-06-02</span></span></code></pre></div>
@@ -554,7 +554,7 @@ attrition:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>cdm<span class="sc">$</span>drug_exposure <span class="sc">|&gt;</span></span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(drug_concept_id <span class="sc">%in%</span> <span class="sc">!!</span>codes<span class="sc">$</span>acetaminophen <span class="sc">&amp;</span> person_id <span class="sc">==</span> <span class="dv">50</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 23]</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;   drug_exposure_id person_id drug_concept_id drug_exposure_start_date</span></span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;              &lt;int&gt;     &lt;int&gt;           &lt;int&gt; &lt;date&gt;                  </span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 1              143        50         1125360 2017-04-14              </span></span>
@@ -573,7 +573,7 @@ different episodes.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(subject_id <span class="sc">==</span> <span class="dv">50</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [?? x 4]</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
 <span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
 <span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; 1                    1         50 2017-04-01        2017-04-23</span></span></code></pre></div>
@@ -597,6 +597,63 @@ cohort.</p>
 <span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt; - acetaminophen (4 codes)</span></span></code></pre></div>
 </div>
+<div id="analogous-functions" class="section level2">
+<h2>Analogous functions</h2>
+<p>The function <code>generateDrugUtilisationCohortSet()</code> has two
+analogous functions:</p>
+<ul>
+<li><code>generateAtcCohortSet()</code> to generate cohorts using ATC
+labels.</li>
+<li><code>generateIngredientCohortSet()</code> to generate cohorts using
+ingredients names.</li>
+</ul>
+<p>Both functions allow to create cohorts and have all the same
+arguments than <code>generateDrugUtilisationCohortSet()</code> the main
+difference is that instead of the <code>conceptSet</code> argument we
+have the <code>atcName</code> argument and the <code>ingredient</code>
+argument. Also both functions have the <code>...</code> argument that is
+used by <code>CodelistGenerator::getATCCodes()</code> and
+<code>CodelistGenerator::getDrugIngredientCodes()</code>
+respectively.</p>
+<p>Let’s see two simple examples, we can generate the ‘alimentary tract
+and metabolism’ (ATC code) cohort with:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">generateAtcCohortSet</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="at">cdm =</span> cdm,</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="at">atcName =</span> <span class="st">&quot;alimentary tract and metabolism&quot;</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;atc_cohort&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; ℹ Subsetting drug_exposure table</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; ℹ Checking whether any record needs to be dropped.</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; Warning: cohort_name must be snake case and have less than 100 characters, the following</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt; cohorts will be renamed:</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; • alimentary tract and metabolism -&gt; alimentary_tract_and_metabolism</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing records with gapEra = 1 days.</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>atc_cohort)</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 8</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name             gap_era level dose_form dose_unit</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;    </span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="co">#&gt; 1                    1 alimentary_tract_and_m… 1       ATC … &quot;&quot;        &quot;&quot;       </span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: route_category &lt;chr&gt;, atc_name &lt;chr&gt;</span></span></code></pre></div>
+<p>And the ‘simvastatin’ and ‘metformin’ cohorts, restricting to
+products with only one ingredient:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">generateIngredientCohortSet</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="at">cdm =</span> cdm,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="at">ingredient =</span> <span class="fu">c</span>(<span class="st">&#39;simvastatin&#39;</span>, <span class="st">&#39;metformin&#39;</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;ingredient_cohort&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="at">ingredientRange =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>)</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt; ℹ Subsetting drug_exposure table</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt; ℹ Checking whether any record needs to be dropped.</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing overlaping records.</span></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing records with gapEra = 1 days.</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>ingredient_cohort)</span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 8</span></span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name gap_era dose_form dose_unit route_category</span></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;         </span></span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a><span class="co">#&gt; 1                    1 metformin   1       &quot;&quot;        &quot;&quot;        &quot;&quot;            </span></span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="co">#&gt; 2                    2 simvastatin 1       &quot;&quot;        &quot;&quot;        &quot;&quot;            </span></span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: ingredient_range &lt;chr&gt;, ingredient_name &lt;chr&gt;</span></span></code></pre></div>
+</div>
 </div>
 <div id="apply-inclusion-criteria-to-drug-cohorts" class="section level1">
 <h1>Apply inclusion criteria to drug cohorts</h1>
@@ -619,49 +676,49 @@ would usually define a time (<code>days</code>) where the individual is
 not exposed to the drug. This can be achieved using
 <code>requirePriorDrugWashout()</code> function. In this example we
 would restrict to individuals with 365 days of no exposure:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">requirePriorDrugWashout</span>(<span class="at">days =</span> <span class="dv">365</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">requirePriorDrugWashout</span>(<span class="at">days =</span> <span class="dv">365</span>)</span></code></pre></div>
 <p>The result will be a cohort with the individuals that fulfill the
 criteria:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         33 2021-02-12        2021-02-14     </span></span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         42 2002-09-15        2007-12-19     </span></span>
-<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         14 1990-04-27        1990-05-12     </span></span>
-<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         23 2003-10-29        2003-11-27     </span></span>
-<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         77 1966-09-15        1966-12-27     </span></span>
-<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="co">#&gt;  6                    1          9 2016-03-17        2016-09-02     </span></span>
-<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         47 1963-12-22        1965-09-16     </span></span>
-<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         39 2022-02-09        2022-06-11     </span></span>
-<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         57 2020-04-17        2020-11-19     </span></span>
-<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         25 2020-01-04        2020-02-05     </span></span>
-<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         33 2021-02-12        2021-02-14     </span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         23 2003-10-29        2003-11-27     </span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         14 1990-04-27        1990-05-12     </span></span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a><span class="co">#&gt;  5                    1          9 2016-03-17        2016-09-02     </span></span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         77 1966-09-15        1966-12-27     </span></span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         47 1963-12-22        1965-09-16     </span></span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         57 2020-04-17        2020-11-19     </span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         39 2022-02-09        2022-06-11     </span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         36 2018-06-17        2018-10-24     </span></span>
+<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and
 settings.</p>
 <p>In the settings a new column with the specified parameter used:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 4</span></span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;            </span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 4</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout</span></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;            </span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365</span></span></code></pre></div>
 <p>The counts will be updated:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             66              62</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             66              62</span></span></code></pre></div>
 <p>And the attrition will have a new line:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 7</span></span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 7</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 <p>The <code>name</code> argument can be used to put the result into a
 different table in our cdm (by default the function updates the current
 cohort table). Whereas the <code>cohortId</code> argument is used to
@@ -671,151 +728,152 @@ example we will create two cohorts (metformin and simvastatin) inside a
 table named <code>my_cohort</code> and then apply the inclusion criteria
 to only one of them (simvastatin) and save the result to a table named:
 <code>my_new_cohort</code></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>codes <span class="ot">&lt;-</span> <span class="fu">getDrugIngredientCodes</span>(<span class="at">cdm =</span> cdm, <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;metformin&quot;</span>, <span class="st">&quot;simvastatin&quot;</span>))</span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(<span class="at">cdm =</span> cdm, <span class="at">name =</span> <span class="st">&quot;my_cohort&quot;</span>, <span class="at">conceptSet =</span> codes, <span class="at">gapEra =</span> <span class="dv">30</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co">#&gt; ℹ Subsetting drug_exposure table</span></span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="co">#&gt; ℹ Checking whether any record needs to be dropped.</span></span>
-<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing overlaping records.</span></span>
-<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing records with gapEra = 30 days.</span></span>
-<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>cdm</span>
-<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a><span class="co">#&gt; ── # OMOP CDM reference (duckdb) of DUS MOCK ───────────────────────────────────</span></span>
-<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a><span class="co">#&gt; • omop tables: person, observation_period, concept, concept_ancestor,</span></span>
-<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a><span class="co">#&gt; drug_strength, concept_relationship, drug_exposure, condition_occurrence,</span></span>
-<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a><span class="co">#&gt; observation, visit_occurrence</span></span>
-<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a><span class="co">#&gt; • cohort tables: cohort1, cohort2, acetaminophen_cohort, my_cohort</span></span>
-<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a><span class="co">#&gt; • achilles tables: -</span></span>
-<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a><span class="co">#&gt; • other tables: -</span></span>
-<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>my_cohort)</span>
-<span id="cb23-17"><a href="#cb23-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 3</span></span>
-<span id="cb23-18"><a href="#cb23-18" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name       gap_era</span></span>
-<span id="cb23-19"><a href="#cb23-19" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;  </span></span>
-<span id="cb23-20"><a href="#cb23-20" tabindex="-1"></a><span class="co">#&gt; 1                    1 36567_simvastatin 30     </span></span>
-<span id="cb23-21"><a href="#cb23-21" tabindex="-1"></a><span class="co">#&gt; 2                    2 6809_metformin    30</span></span>
-<span id="cb23-22"><a href="#cb23-22" tabindex="-1"></a>cdm<span class="sc">$</span>my_new_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>my_cohort <span class="sc">|&gt;</span></span>
-<span id="cb23-23"><a href="#cb23-23" tabindex="-1"></a>  <span class="fu">requirePriorDrugWashout</span>(<span class="at">days =</span> <span class="dv">365</span>, <span class="at">cohortId =</span> <span class="dv">2</span>, <span class="at">name =</span> <span class="st">&quot;my_new_cohort&quot;</span>)</span>
-<span id="cb23-24"><a href="#cb23-24" tabindex="-1"></a>cdm</span>
-<span id="cb23-25"><a href="#cb23-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb23-26"><a href="#cb23-26" tabindex="-1"></a><span class="co">#&gt; ── # OMOP CDM reference (duckdb) of DUS MOCK ───────────────────────────────────</span></span>
-<span id="cb23-27"><a href="#cb23-27" tabindex="-1"></a><span class="co">#&gt; • omop tables: person, observation_period, concept, concept_ancestor,</span></span>
-<span id="cb23-28"><a href="#cb23-28" tabindex="-1"></a><span class="co">#&gt; drug_strength, concept_relationship, drug_exposure, condition_occurrence,</span></span>
-<span id="cb23-29"><a href="#cb23-29" tabindex="-1"></a><span class="co">#&gt; observation, visit_occurrence</span></span>
-<span id="cb23-30"><a href="#cb23-30" tabindex="-1"></a><span class="co">#&gt; • cohort tables: cohort1, cohort2, acetaminophen_cohort, my_cohort,</span></span>
-<span id="cb23-31"><a href="#cb23-31" tabindex="-1"></a><span class="co">#&gt; my_new_cohort</span></span>
-<span id="cb23-32"><a href="#cb23-32" tabindex="-1"></a><span class="co">#&gt; • achilles tables: -</span></span>
-<span id="cb23-33"><a href="#cb23-33" tabindex="-1"></a><span class="co">#&gt; • other tables: -</span></span>
-<span id="cb23-34"><a href="#cb23-34" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>my_new_cohort)</span>
-<span id="cb23-35"><a href="#cb23-35" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 7</span></span>
-<span id="cb23-36"><a href="#cb23-36" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb23-37"><a href="#cb23-37" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb23-38"><a href="#cb23-38" tabindex="-1"></a><span class="co">#&gt; 1                    1             53              48         1 Initial qualify…</span></span>
-<span id="cb23-39"><a href="#cb23-39" tabindex="-1"></a><span class="co">#&gt; 2                    1             51              48         2 Collapse record…</span></span>
-<span id="cb23-40"><a href="#cb23-40" tabindex="-1"></a><span class="co">#&gt; 3                    2             55              48         1 Initial qualify…</span></span>
-<span id="cb23-41"><a href="#cb23-41" tabindex="-1"></a><span class="co">#&gt; 4                    2             52              48         2 Collapse record…</span></span>
-<span id="cb23-42"><a href="#cb23-42" tabindex="-1"></a><span class="co">#&gt; 5                    2             51              48         3 require prior u…</span></span>
-<span id="cb23-43"><a href="#cb23-43" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>codes <span class="ot">&lt;-</span> <span class="fu">getDrugIngredientCodes</span>(<span class="at">cdm =</span> cdm, <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;metformin&quot;</span>, <span class="st">&quot;simvastatin&quot;</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">generateDrugUtilisationCohortSet</span>(<span class="at">cdm =</span> cdm, <span class="at">name =</span> <span class="st">&quot;my_cohort&quot;</span>, <span class="at">conceptSet =</span> codes, <span class="at">gapEra =</span> <span class="dv">30</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; ℹ Subsetting drug_exposure table</span></span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt; ℹ Checking whether any record needs to be dropped.</span></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing overlaping records.</span></span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="co">#&gt; ℹ Collapsing records with gapEra = 30 days.</span></span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>cdm</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a><span class="co">#&gt; ── # OMOP CDM reference (duckdb) of DUS MOCK ───────────────────────────────────</span></span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a><span class="co">#&gt; • omop tables: person, observation_period, concept, concept_ancestor,</span></span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="co">#&gt; drug_strength, concept_relationship, drug_exposure, condition_occurrence,</span></span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a><span class="co">#&gt; observation, visit_occurrence</span></span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="co">#&gt; • cohort tables: cohort1, cohort2, acetaminophen_cohort, atc_cohort,</span></span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a><span class="co">#&gt; ingredient_cohort, my_cohort</span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a><span class="co">#&gt; • achilles tables: -</span></span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a><span class="co">#&gt; • other tables: -</span></span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>my_cohort)</span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name       gap_era</span></span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;  </span></span>
+<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a><span class="co">#&gt; 1                    1 36567_simvastatin 30     </span></span>
+<span id="cb25-22"><a href="#cb25-22" tabindex="-1"></a><span class="co">#&gt; 2                    2 6809_metformin    30</span></span>
+<span id="cb25-23"><a href="#cb25-23" tabindex="-1"></a>cdm<span class="sc">$</span>my_new_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>my_cohort <span class="sc">|&gt;</span></span>
+<span id="cb25-24"><a href="#cb25-24" tabindex="-1"></a>  <span class="fu">requirePriorDrugWashout</span>(<span class="at">days =</span> <span class="dv">365</span>, <span class="at">cohortId =</span> <span class="dv">2</span>, <span class="at">name =</span> <span class="st">&quot;my_new_cohort&quot;</span>)</span>
+<span id="cb25-25"><a href="#cb25-25" tabindex="-1"></a>cdm</span>
+<span id="cb25-26"><a href="#cb25-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-27"><a href="#cb25-27" tabindex="-1"></a><span class="co">#&gt; ── # OMOP CDM reference (duckdb) of DUS MOCK ───────────────────────────────────</span></span>
+<span id="cb25-28"><a href="#cb25-28" tabindex="-1"></a><span class="co">#&gt; • omop tables: person, observation_period, concept, concept_ancestor,</span></span>
+<span id="cb25-29"><a href="#cb25-29" tabindex="-1"></a><span class="co">#&gt; drug_strength, concept_relationship, drug_exposure, condition_occurrence,</span></span>
+<span id="cb25-30"><a href="#cb25-30" tabindex="-1"></a><span class="co">#&gt; observation, visit_occurrence</span></span>
+<span id="cb25-31"><a href="#cb25-31" tabindex="-1"></a><span class="co">#&gt; • cohort tables: cohort1, cohort2, acetaminophen_cohort, atc_cohort,</span></span>
+<span id="cb25-32"><a href="#cb25-32" tabindex="-1"></a><span class="co">#&gt; ingredient_cohort, my_cohort, my_new_cohort</span></span>
+<span id="cb25-33"><a href="#cb25-33" tabindex="-1"></a><span class="co">#&gt; • achilles tables: -</span></span>
+<span id="cb25-34"><a href="#cb25-34" tabindex="-1"></a><span class="co">#&gt; • other tables: -</span></span>
+<span id="cb25-35"><a href="#cb25-35" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>my_new_cohort)</span>
+<span id="cb25-36"><a href="#cb25-36" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 7</span></span>
+<span id="cb25-37"><a href="#cb25-37" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb25-38"><a href="#cb25-38" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb25-39"><a href="#cb25-39" tabindex="-1"></a><span class="co">#&gt; 1                    1             53              48         1 Initial qualify…</span></span>
+<span id="cb25-40"><a href="#cb25-40" tabindex="-1"></a><span class="co">#&gt; 2                    1             51              48         2 Collapse record…</span></span>
+<span id="cb25-41"><a href="#cb25-41" tabindex="-1"></a><span class="co">#&gt; 3                    2             55              48         1 Initial qualify…</span></span>
+<span id="cb25-42"><a href="#cb25-42" tabindex="-1"></a><span class="co">#&gt; 4                    2             52              48         2 Collapse record…</span></span>
+<span id="cb25-43"><a href="#cb25-43" tabindex="-1"></a><span class="co">#&gt; 5                    2             51              48         3 require prior u…</span></span>
+<span id="cb25-44"><a href="#cb25-44" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 </div>
 <div id="requireisfirstdrugentry" class="section level2">
 <h2><code>requireIsFirstDrugEntry()</code></h2>
 <p>To require that the cohort entry (drug episodes) is the first one of
 the available ones we can use the <code>requireIsFirstDrugEntry()</code>
 function. See example:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  <span class="fu">requireIsFirstDrugEntry</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">requireIsFirstDrugEntry</span>()</span></code></pre></div>
 <p>The result will be a cohort with the individuals that fulfill the
 criteria:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
-<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
-<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
-<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="co">#&gt;  1                    1          7 1969-09-09        1970-02-14     </span></span>
-<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         35 2005-11-10        2006-09-09     </span></span>
-<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         58 1995-08-29        2002-06-12     </span></span>
-<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         62 2005-01-24        2006-12-05     </span></span>
-<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         72 2009-12-10        2010-03-30     </span></span>
-<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         77 1966-09-15        1966-12-27     </span></span>
-<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         80 2022-08-25        2022-09-06     </span></span>
-<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         39 2022-02-09        2022-06-11     </span></span>
-<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         45 2017-07-03        2018-07-06     </span></span>
-<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         75 2010-06-16        2011-09-20     </span></span>
-<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         94 2000-10-10        2004-08-16     </span></span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a><span class="co">#&gt;  3                    1          7 1969-09-09        1970-02-14     </span></span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         35 2005-11-10        2006-09-09     </span></span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         58 1995-08-29        2002-06-12     </span></span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         62 2005-01-24        2006-12-05     </span></span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         72 2009-12-10        2010-03-30     </span></span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         77 1966-09-15        1966-12-27     </span></span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         80 2022-08-25        2022-09-06     </span></span>
+<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a><span class="co">#&gt; 10                    1          3 1996-09-13        2008-07-15     </span></span>
+<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
 <p>In the settings a new column with the specified parameter used:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
-<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 5</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span></code></pre></div>
 <p>The counts will be updated:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             62              62</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             62              62</span></span></code></pre></div>
 <p>And the attrition will have a new line:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 7</span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
-<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
-<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
-<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 7</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
+<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
+<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
+<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 </div>
 <div id="requireobservationbeforedrug" class="section level2">
 <h2><code>requireObservationBeforeDrug()</code></h2>
 <p>To require that a cohort entry (drug episodes) has a certain time of
 prior observation we can use the
 <code>requireObservationBeforeDrug()</code> function. See example:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="fu">requireObservationBeforeDrug</span>(<span class="at">days =</span> <span class="dv">365</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="fu">requireObservationBeforeDrug</span>(<span class="at">days =</span> <span class="dv">365</span>)</span></code></pre></div>
 <p>The result will be a cohort with the individuals that fulfill the
 criteria:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
-<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
-<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
-<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a><span class="co">#&gt;  1                    1          7 1969-09-09        1970-02-14     </span></span>
-<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         35 2005-11-10        2006-09-09     </span></span>
-<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         58 1995-08-29        2002-06-12     </span></span>
-<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         62 2005-01-24        2006-12-05     </span></span>
-<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         45 2017-07-03        2018-07-06     </span></span>
-<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         75 2010-06-16        2011-09-20     </span></span>
-<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         29 2020-12-08        2021-01-09     </span></span>
-<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         97 1991-02-09        1991-10-07     </span></span>
-<span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         96 2011-05-25        2013-01-23     </span></span>
-<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         14 1990-04-27        1990-05-12     </span></span>
-<span id="cb30-16"><a href="#cb30-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a><span class="co">#&gt;  2                    1          7 1969-09-09        1970-02-14     </span></span>
+<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         35 2005-11-10        2006-09-09     </span></span>
+<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         58 1995-08-29        2002-06-12     </span></span>
+<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         62 2005-01-24        2006-12-05     </span></span>
+<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a><span class="co">#&gt;  6                    1          3 1996-09-13        2008-07-15     </span></span>
+<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         47 1963-12-22        1965-09-16     </span></span>
+<span id="cb32-13"><a href="#cb32-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         51 2017-09-04        2017-09-17     </span></span>
+<span id="cb32-14"><a href="#cb32-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         73 2011-04-02        2011-06-19     </span></span>
+<span id="cb32-15"><a href="#cb32-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         44 2017-01-01        2018-03-30     </span></span>
+<span id="cb32-16"><a href="#cb32-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
 <p>In the settings a new column with the specified parameter used:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 6</span></span>
-<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
-<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
-<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span>
-<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: prior_drug_observation &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 6</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
+<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span>
+<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: prior_drug_observation &lt;chr&gt;</span></span></code></pre></div>
 <p>The counts will be updated:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             33              33</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             33              33</span></span></code></pre></div>
 <p>And the attrition will have a new line:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 7</span></span>
-<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
-<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
-<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
-<span id="cb33-8"><a href="#cb33-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
-<span id="cb33-9"><a href="#cb33-9" tabindex="-1"></a><span class="co">#&gt; 5                    1             33              33         5 require prior o…</span></span>
-<span id="cb33-10"><a href="#cb33-10" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 7</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
+<span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
+<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
+<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a><span class="co">#&gt; 5                    1             33              33         5 require prior o…</span></span>
+<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 </div>
 <div id="requiredrugindaterange" class="section level2">
 <h2><code>requireDrugInDateRange()</code></h2>
@@ -825,73 +883,73 @@ within an specific range we can use the
 like to apply this restriction to the incident date (cohort_start_date),
 but the function is flexible and you can use it to restrict to any other
 date. See example:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
-<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="fu">requireDrugInDateRange</span>(</span>
-<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>    <span class="at">indexDate =</span> <span class="st">&quot;cohort_start_date&quot;</span>,</span>
-<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>    <span class="at">dateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;2000-01-01&quot;</span>, <span class="st">&quot;2020-12-31&quot;</span>))</span>
-<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>acetaminophen_cohort <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">requireDrugInDateRange</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>    <span class="at">indexDate =</span> <span class="st">&quot;cohort_start_date&quot;</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>    <span class="at">dateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;2000-01-01&quot;</span>, <span class="st">&quot;2020-12-31&quot;</span>))</span>
+<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a>  )</span></code></pre></div>
 <p>The result will be a cohort with the individuals that fulfill the
 criteria:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
-<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
-<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
-<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
-<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
-<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         35 2005-11-10        2006-09-09     </span></span>
-<span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         62 2005-01-24        2006-12-05     </span></span>
-<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         45 2017-07-03        2018-07-06     </span></span>
-<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         75 2010-06-16        2011-09-20     </span></span>
-<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         29 2020-12-08        2021-01-09     </span></span>
-<span id="cb35-11"><a href="#cb35-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         96 2011-05-25        2013-01-23     </span></span>
-<span id="cb35-12"><a href="#cb35-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         23 2003-10-29        2003-11-27     </span></span>
-<span id="cb35-13"><a href="#cb35-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         93 2014-01-09        2016-06-21     </span></span>
-<span id="cb35-14"><a href="#cb35-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         42 2002-09-15        2007-12-19     </span></span>
-<span id="cb35-15"><a href="#cb35-15" tabindex="-1"></a><span class="co">#&gt; 10                    1          8 2019-09-14        2020-12-31     </span></span>
-<span id="cb35-16"><a href="#cb35-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>cdm<span class="sc">$</span>acetaminophen_cohort</span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;acetaminophen_cohort&gt; [?? x 4]</span></span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB v1.2.2 [root@Darwin 24.4.0:R 4.4.1/:memory:]</span></span>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date</span></span>
+<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         </span></span>
+<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a><span class="co">#&gt;  1                    1         42 2002-09-15        2007-12-19     </span></span>
+<span id="cb37-7"><a href="#cb37-7" tabindex="-1"></a><span class="co">#&gt;  2                    1         35 2005-11-10        2006-09-09     </span></span>
+<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a><span class="co">#&gt;  3                    1         62 2005-01-24        2006-12-05     </span></span>
+<span id="cb37-9"><a href="#cb37-9" tabindex="-1"></a><span class="co">#&gt;  4                    1         51 2017-09-04        2017-09-17     </span></span>
+<span id="cb37-10"><a href="#cb37-10" tabindex="-1"></a><span class="co">#&gt;  5                    1         73 2011-04-02        2011-06-19     </span></span>
+<span id="cb37-11"><a href="#cb37-11" tabindex="-1"></a><span class="co">#&gt;  6                    1         44 2017-01-01        2018-03-30     </span></span>
+<span id="cb37-12"><a href="#cb37-12" tabindex="-1"></a><span class="co">#&gt;  7                    1         88 2015-08-19        2016-05-09     </span></span>
+<span id="cb37-13"><a href="#cb37-13" tabindex="-1"></a><span class="co">#&gt;  8                    1         45 2017-07-03        2018-07-06     </span></span>
+<span id="cb37-14"><a href="#cb37-14" tabindex="-1"></a><span class="co">#&gt;  9                    1         75 2010-06-16        2011-09-20     </span></span>
+<span id="cb37-15"><a href="#cb37-15" tabindex="-1"></a><span class="co">#&gt; 10                    1         29 2020-12-08        2021-01-09     </span></span>
+<span id="cb37-16"><a href="#cb37-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>This would also get recorded in the attrition, counts and settings on
 top of the already exiting ones.</p>
 <p>In the settings a new column with the specified parameter used:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 6</span></span>
-<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
-<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
-<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span>
-<span id="cb36-6"><a href="#cb36-6" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: prior_drug_observation &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">settings</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 6</span></span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id cohort_name   gap_era prior_use_washout limit      </span></span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;      </span></span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a><span class="co">#&gt; 1                    1 acetaminophen 30      365               first_entry</span></span>
+<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: prior_drug_observation &lt;chr&gt;</span></span></code></pre></div>
 <p>The counts will be updated:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
-<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
-<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
-<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             24              24</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="fu">cohortCount</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects</span></span>
+<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             24              24</span></span></code></pre></div>
 <p>And the attrition will have a new line:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 7</span></span>
-<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
-<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
-<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
-<span id="cb38-8"><a href="#cb38-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
-<span id="cb38-9"><a href="#cb38-9" tabindex="-1"></a><span class="co">#&gt; 5                    1             33              33         5 require prior o…</span></span>
-<span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a><span class="co">#&gt; 6                    1             24              24         6 require cohort_…</span></span>
-<span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>acetaminophen_cohort)</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 7</span></span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a><span class="co">#&gt; 1                    1             71              62         1 Initial qualify…</span></span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a><span class="co">#&gt; 2                    1             70              62         2 Collapse record…</span></span>
+<span id="cb40-7"><a href="#cb40-7" tabindex="-1"></a><span class="co">#&gt; 3                    1             66              62         3 require prior u…</span></span>
+<span id="cb40-8"><a href="#cb40-8" tabindex="-1"></a><span class="co">#&gt; 4                    1             62              62         4 require is the …</span></span>
+<span id="cb40-9"><a href="#cb40-9" tabindex="-1"></a><span class="co">#&gt; 5                    1             33              33         5 require prior o…</span></span>
+<span id="cb40-10"><a href="#cb40-10" tabindex="-1"></a><span class="co">#&gt; 6                    1             24              24         6 require cohort_…</span></span>
+<span id="cb40-11"><a href="#cb40-11" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 <p>If you just want to restrict on the lower or upper bound you can just
 leave the other element as NA and then no condition will be applied, see
 for example:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>cdm<span class="sc">$</span>my_new_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>my_new_cohort <span class="sc">|&gt;</span></span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">requireDrugInDateRange</span>(<span class="at">dateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;2010-12-31&quot;</span>)))</span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>my_new_cohort)</span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 7</span></span>
-<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
-<span id="cb39-6"><a href="#cb39-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
-<span id="cb39-7"><a href="#cb39-7" tabindex="-1"></a><span class="co">#&gt; 1                    1             53              48         1 Initial qualify…</span></span>
-<span id="cb39-8"><a href="#cb39-8" tabindex="-1"></a><span class="co">#&gt; 2                    1             51              48         2 Collapse record…</span></span>
-<span id="cb39-9"><a href="#cb39-9" tabindex="-1"></a><span class="co">#&gt; 3                    1             18              18         3 require cohort_…</span></span>
-<span id="cb39-10"><a href="#cb39-10" tabindex="-1"></a><span class="co">#&gt; 4                    2             55              48         1 Initial qualify…</span></span>
-<span id="cb39-11"><a href="#cb39-11" tabindex="-1"></a><span class="co">#&gt; 5                    2             52              48         2 Collapse record…</span></span>
-<span id="cb39-12"><a href="#cb39-12" tabindex="-1"></a><span class="co">#&gt; 6                    2             51              48         3 require prior u…</span></span>
-<span id="cb39-13"><a href="#cb39-13" tabindex="-1"></a><span class="co">#&gt; 7                    2             23              21         4 require cohort_…</span></span>
-<span id="cb39-14"><a href="#cb39-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>cdm<span class="sc">$</span>my_new_cohort <span class="ot">&lt;-</span> cdm<span class="sc">$</span>my_new_cohort <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="fu">requireDrugInDateRange</span>(<span class="at">dateRange =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;2010-12-31&quot;</span>)))</span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a><span class="fu">attrition</span>(cdm<span class="sc">$</span>my_new_cohort)</span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 7</span></span>
+<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a><span class="co">#&gt;   cohort_definition_id number_records number_subjects reason_id reason          </span></span>
+<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a><span class="co">#&gt;                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;           </span></span>
+<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a><span class="co">#&gt; 1                    1             53              48         1 Initial qualify…</span></span>
+<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a><span class="co">#&gt; 2                    1             51              48         2 Collapse record…</span></span>
+<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a><span class="co">#&gt; 3                    1             18              18         3 require cohort_…</span></span>
+<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a><span class="co">#&gt; 4                    2             55              48         1 Initial qualify…</span></span>
+<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a><span class="co">#&gt; 5                    2             52              48         2 Collapse record…</span></span>
+<span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a><span class="co">#&gt; 6                    2             51              48         3 require prior u…</span></span>
+<span id="cb41-13"><a href="#cb41-13" tabindex="-1"></a><span class="co">#&gt; 7                    2             23              21         4 require cohort_…</span></span>
+<span id="cb41-14"><a href="#cb41-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: excluded_records &lt;int&gt;, excluded_subjects &lt;int&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div id="the-order-matters" class="section level1">
