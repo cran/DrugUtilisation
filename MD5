@@ -1,6 +1,6 @@
-784eb1bbf59c02f34cd66a0740565497 *DESCRIPTION
+6281c2cc2e1c375bfcf75d6d9b83a05f *DESCRIPTION
 63f261e3bb2e40dcaffac4289f75a056 *NAMESPACE
-f62bf1adab0975e8d008470445712511 *NEWS.md
+e97d8a69a325b4e0337f24a5ef931737 *NEWS.md
 7c1b3d3a9356bd09e8699529da72c9e4 *R/DrugUtilisation-package.R
 965afe4b8f765b3f7cef4fa662d779dc *R/addDrugUtilisation.R
 f0635beee6884a91e57406d82c972f04 *R/addIntersect.R
@@ -35,10 +35,10 @@ ec2d3e28a1437e6c66b50b28104e8b61 *inst/CITATION
 0a5859bac1086d600412d75b6318f486 *inst/concepts/influenza.json
 37acebd0c9a9c71fe310c94c443abf1c *inst/doc/create_cohorts.R
 2427e1b84b3e899967c76e5f84b532f5 *inst/doc/create_cohorts.Rmd
-828d160598df85502ed981429dfc93c7 *inst/doc/create_cohorts.html
+cc91eb21a27105abaff53f20745623e1 *inst/doc/create_cohorts.html
 24a74fd502b9aedc691251a79fbce5a9 *inst/doc/drug_utilisation.R
 8fd4d0f4e9d27bce6c9a2006c719520f *inst/doc/drug_utilisation.Rmd
-6d1003bd2e351d95a2e92a11503b1c41 *inst/doc/drug_utilisation.html
+06ea723d974963e59f082895f320ea8c *inst/doc/drug_utilisation.html
 822f532022ce0278566c81c82898a66c *inst/pattern_assessment_for_dose_final.csv
 2fbf723eb10ebd60af9d20c226081f37 *man/DrugUtilisation-package.Rd
 9687769a94b26bbb3b9b8eff62be98f3 *man/addCumulativeDose.Rd
@@ -114,7 +114,7 @@ f65eec10e469ff415f677753865a4c88 *man/tableIndication.Rd
 7b42a0baadcfa67338e394c8fe8e73d2 *tests/testthat/test-benchmarkDrugUtilisation.R
 68a0667a9947cac7a472ebe12d04edf6 *tests/testthat/test-dailyDose.R
 3f285d41c2df2e41ab1b79721d89504d *tests/testthat/test-erafyCohort.R
-dee53fb1292347266ba6324c3285e2da *tests/testthat/test-generateDrugUtilisationCohortSet.R
+889a9adc14fa525002df78ae0718539b *tests/testthat/test-generateDrugUtilisationCohortSet.R
 07b6b11dd87cb278919e429cb9eebda8 *tests/testthat/test-generatedAtcCohortSet.R
 252ab2ad9ec98a68129327cc7fdc88ea *tests/testthat/test-generatedIngredientCohortSet.R
 0207d2e0095fbe8455650579e0d8ce1f *tests/testthat/test-indication.R
