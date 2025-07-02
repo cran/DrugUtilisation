@@ -1,6 +1,6 @@
-6281c2cc2e1c375bfcf75d6d9b83a05f *DESCRIPTION
+5df69dd4f0f1d69d8c4492663a9379cc *DESCRIPTION
 63f261e3bb2e40dcaffac4289f75a056 *NAMESPACE
-e97d8a69a325b4e0337f24a5ef931737 *NEWS.md
+4f559e578fd7196c197e76c5029a269f *NEWS.md
 7c1b3d3a9356bd09e8699529da72c9e4 *R/DrugUtilisation-package.R
 965afe4b8f765b3f7cef4fa662d779dc *R/addDrugUtilisation.R
 f0635beee6884a91e57406d82c972f04 *R/addIntersect.R
@@ -15,7 +15,7 @@ c0a20c1080eacc195b2df3742de33699 *R/data.R
 e0e13a9cdc85d9e05bda897d0dbdb8d3 *R/generateIngredientCohortSet.R
 eaec49ce39d0dbe3276e7e1671c4cd9e *R/mockDrugUtilisation.R
 65907ac3f216cc9dca1f9606f99ed325 *R/pattern.R
-635758b955aa0c8904baa3e47e11fec5 *R/plots.R
+ab00e89441bb9330d0fe5395a72de633 *R/plots.R
 376a50443bcf86995e1e9468fd94ff6b *R/reexports.R
 f50279b4b57a0e79dbe3c77ffd7c2c35 *R/require.R
 30c272366d9646cb04b09dd12e80f43b *R/summariseDrugRestart.R
@@ -35,10 +35,10 @@ ec2d3e28a1437e6c66b50b28104e8b61 *inst/CITATION
 0a5859bac1086d600412d75b6318f486 *inst/concepts/influenza.json
 37acebd0c9a9c71fe310c94c443abf1c *inst/doc/create_cohorts.R
 2427e1b84b3e899967c76e5f84b532f5 *inst/doc/create_cohorts.Rmd
-cc91eb21a27105abaff53f20745623e1 *inst/doc/create_cohorts.html
+6718f4c10de44aeea178639a290607c8 *inst/doc/create_cohorts.html
 24a74fd502b9aedc691251a79fbce5a9 *inst/doc/drug_utilisation.R
 8fd4d0f4e9d27bce6c9a2006c719520f *inst/doc/drug_utilisation.Rmd
-06ea723d974963e59f082895f320ea8c *inst/doc/drug_utilisation.html
+021ffe3ad7c7ac100e7159f9406e10cb *inst/doc/drug_utilisation.html
 822f532022ce0278566c81c82898a66c *inst/pattern_assessment_for_dose_final.csv
 2fbf723eb10ebd60af9d20c226081f37 *man/DrugUtilisation-package.Rd
 9687769a94b26bbb3b9b8eff62be98f3 *man/addCumulativeDose.Rd
