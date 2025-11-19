@@ -6,8 +6,10 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 library(DrugUtilisation)
+library(omopgenerics, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
 
-cdm <- mockDrugUtilisation(numberIndividuals = 100, seed = 1)
+cdm <- mockDrugUtilisation(numberIndividuals = 100, source = "duckdb")
 
 cdm
 
@@ -16,18 +18,19 @@ conceptSet <- list(acetaminophen = c(1, 2, 3))
 conceptSet
 
 ## -----------------------------------------------------------------------------
-conceptSet <- list(acetaminophen = c(1, 2, 3)) |> omopgenerics::newCodelist()
+conceptSet <- list(acetaminophen = c(1, 2, 3)) |> 
+  newCodelist()
 conceptSet
 conceptSet$acetaminophen
 
 ## -----------------------------------------------------------------------------
-conceptSet <- list(acetaminophen = dplyr::tibble(
+conceptSet <- list(acetaminophen = tibble(
   concept_id = 1125315,
   excluded = FALSE,
   descendants = TRUE,
   mapped = FALSE
 )) |>
-  omopgenerics::newConceptSetExpression()
+  newConceptSetExpression()
 conceptSet
 conceptSet$acetaminophen
 
@@ -35,8 +38,8 @@ conceptSet$acetaminophen
 library(CodelistGenerator)
 
 ## -----------------------------------------------------------------------------
-codes <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")
-codes[["161_acetaminophen"]]
+codes <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen", nameStyle = "{concept_name}")
+codes[["acetaminophen"]]
 
 ## -----------------------------------------------------------------------------
 codes <- codesFromConceptSet(path = system.file("acetaminophen.json", package = "DrugUtilisation"), cdm = cdm)
@@ -51,9 +54,8 @@ dplyr::tibble(
   tidyr::pivot_longer(c("start", "end")) |>
   dplyr::mutate(lab = format(value, "%d %b")) |>
   ggplot2::ggplot(ggplot2::aes(x = value, y = drug_exposure_id, group = drug_exposure_id, label = lab)) +
-  ggplot2::geom_point(size = 5) +
+  ggplot2::geom_point(size = 3) +
   ggplot2::geom_line(linewidth = 2) +
-  ggplot2::lims(y = c(0.5, 4.5)) +
   ggplot2::geom_text(nudge_y = 0.2) +
   ggplot2::geom_line(
     data = dplyr::tibble(
@@ -80,6 +82,7 @@ dplyr::tibble(
   ) +
   # ggplot2::ggtitle("subject_id = 1") +
   ggplot2::ylab("Drug exposure id") +
+  ggplot2::scale_y_continuous(breaks = c(1:4), limits = c(0.5, 4.5)) +
   ggplot2::xlab("Time") +
   ggplot2::theme(legend.position = "none")
 
@@ -141,29 +144,33 @@ x |>
   ggplot2::theme(legend.position = "none", axis.ticks.y = ggplot2::element_blank())
 
 ## ----messages = TRUE----------------------------------------------------------
-codes <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")
-names(codes) <- "acetaminophen"
-cdm <- generateDrugUtilisationCohortSet(cdm = cdm, name = "acetaminophen_cohort", conceptSet = codes, gapEra = 30)
+codes <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen", nameStyle = "{concept_name}")
+cdm <- generateDrugUtilisationCohortSet(
+  cdm = cdm, 
+  name = "acetaminophen_cohort", 
+  conceptSet = codes, 
+  gapEra = 30L
+)
 cdm
 
 ## -----------------------------------------------------------------------------
 cdm$drug_exposure |>
-  dplyr::filter(drug_concept_id %in% !!codes$acetaminophen & person_id == 69)
+  filter(drug_concept_id %in% !!codes$acetaminophen & person_id == 69)
 
 ## -----------------------------------------------------------------------------
 cdm$acetaminophen_cohort |>
-  dplyr::filter(subject_id == 69)
+  filter(subject_id == 69)
 
 ## -----------------------------------------------------------------------------
 attrition(cdm$acetaminophen_cohort)
 
 ## -----------------------------------------------------------------------------
 cdm$drug_exposure |>
-  dplyr::filter(drug_concept_id %in% !!codes$acetaminophen & person_id == 50)
+  filter(drug_concept_id %in% !!codes$acetaminophen & person_id == 50)
 
 ## -----------------------------------------------------------------------------
 cdm$acetaminophen_cohort |>
-  dplyr::filter(subject_id == 50)
+  filter(subject_id == 50)
 
 ## -----------------------------------------------------------------------------
 settings(cdm$acetaminophen_cohort)
@@ -186,6 +193,141 @@ cdm <- generateIngredientCohortSet(
   ingredientRange = c(1, 1)
 )
 settings(cdm$ingredient_cohort)
+
+## ----echo = FALSE, fig.width = 7, fig.height = 3------------------------------
+dplyr::tibble(
+  drug_exposure_id = c(1, 2),
+  start = as.Date(c("2020-01-01", "2020-01-20")),
+  end = as.Date(c("2020-01-30", "2020-02-15"))
+) |>
+  tidyr::pivot_longer(c("start", "end")) |>
+  dplyr::mutate(lab = format(value, "%d %b")) |>
+  ggplot2::ggplot(ggplot2::aes(x = value, y = drug_exposure_id, group = drug_exposure_id, label = lab)) +
+  ggplot2::geom_point(size = 3) +
+  ggplot2::geom_line(linewidth = 2) +
+  ggplot2::geom_text(nudge_y = 0.2) +
+  ggplot2::geom_line(
+    data = dplyr::tibble(
+      y = c(1.5),
+      type = c("overlap"),
+      start = as.Date(c("2020-01-20")),
+      end = as.Date(c("2020-01-30"))
+    ) |>
+      tidyr::pivot_longer(c("start", "end")),
+    mapping = ggplot2::aes(x = value, y = y, group = y, color = type),
+    inherit.aes = FALSE,
+    linewidth = 2
+  ) +
+  ggtext::geom_richtext(
+    data = dplyr::tibble(
+      y = c(1.5),
+      type = c("overlap"),
+      lab = c("overlap"),
+      start = as.Date(c("2020-01-25"))
+    ),
+    mapping = ggplot2::aes(x = start, y = y, group = y, label = lab, color = type),
+    inherit.aes = FALSE,
+    nudge_y = 0.2
+  ) +
+  # ggplot2::ggtitle("subject_id = 1") +
+  ggplot2::ylab("Drug exposure id") +
+  ggplot2::scale_y_continuous(breaks = c(1:2), limits = c(0.75, 2.5)) +
+  ggplot2::xlab("Time") +
+  ggplot2::theme(legend.position = "none")
+
+## ----echo = FALSE, fig.width = 7, fig.height = 3------------------------------
+dplyr::tibble(
+  drug_exposure_id = c(1, 2),
+  start = as.Date(c("2020-01-01", "2020-01-20")),
+  end = as.Date(c("2020-01-30", "2020-02-15"))
+) |>
+  tidyr::pivot_longer(c("start", "end")) |>
+  dplyr::mutate(lab = format(value, "%d %b")) |>
+  ggplot2::ggplot(ggplot2::aes(x = value, y = drug_exposure_id, group = drug_exposure_id, label = lab)) +
+  ggplot2::geom_point(size = 3) +
+  ggplot2::geom_line(linewidth = 2) +
+  ggplot2::geom_text(nudge_y = 0.2) +
+  ggplot2::geom_line(
+    data = dplyr::tibble(
+      y = c(1.5),
+      type = c("overlap"),
+      start = as.Date(c("2020-01-20")),
+      end = as.Date(c("2020-01-30"))
+    ) |>
+      tidyr::pivot_longer(c("start", "end")),
+    mapping = ggplot2::aes(x = value, y = y, group = y, color = type),
+    inherit.aes = FALSE,
+    linewidth = 2
+  ) +
+  ggplot2::geom_line(
+    data = dplyr::tibble(
+      y = c(0.5),
+      type = c("zoriginal", "overlap"),
+      start = as.Date(c("2020-01-01", "2020-02-16")),
+      end = as.Date(c("2020-02-15", "2020-02-26"))
+    ) |>
+      tidyr::pivot_longer(c("start", "end")),
+    mapping = ggplot2::aes(x = value, y = y, group = type, color = type),
+    inherit.aes = FALSE,
+    linewidth = 2
+  ) +
+  ggtext::geom_richtext(
+    data = dplyr::tibble(
+      y = c(1.5, 0.5, 0.5),
+      type = c("overlap", "zoriginal", "overlap"),
+      lab = c("overlap", "exposure", "carry over"),
+      start = as.Date(c("2020-01-25", "2020-01-25", "2020-02-21"))
+    ),
+    mapping = ggplot2::aes(x = start, y = y, group = y, label = lab, color = type),
+    inherit.aes = FALSE,
+    nudge_y = 0.2
+  ) +
+  # ggplot2::ggtitle("subject_id = 1") +
+  ggplot2::ylab("Drug exposure id") +
+  ggplot2::scale_y_continuous(breaks = c(1:2), limits = c(0.25, 2.5)) +
+  ggplot2::xlab("Time") +
+  ggplot2::theme(legend.position = "none")
+
+## -----------------------------------------------------------------------------
+cdm2 <- mockDrugUtilisation(drug_exposure = tibble(
+  drug_exposure_id = 1:2L,
+  person_id = 1L,
+  drug_concept_id = 1125360L,
+  drug_exposure_start_date = as.Date(c("2020-01-01", "2020-01-20")),
+  drug_exposure_end_date = as.Date(c("2020-01-30", "2020-02-15"))
+), source = "duckdb")
+cdm2$drug_exposure
+
+## -----------------------------------------------------------------------------
+cdm2 <- generateDrugUtilisationCohortSet(
+  cdm = cdm2, 
+  name = "dus_cohort", 
+  conceptSet = codes, 
+  daysPrescribed = TRUE
+)
+
+## -----------------------------------------------------------------------------
+cdm2$dus_cohort |>
+  glimpse()
+
+## -----------------------------------------------------------------------------
+library(CohortConstructor)
+cdm2$dus_cohort <- cdm2$dus_cohort |>
+  mutate(days_to_add = days_prescribed - 1L) |>
+  padCohortDate(
+    days = "days_to_add",
+    cohortDate = "cohort_end_date",
+    indexDate = "cohort_start_date",
+    collapse = TRUE
+  )
+
+## -----------------------------------------------------------------------------
+cdm2$dus_cohort
+
+## -----------------------------------------------------------------------------
+cdm2$dus_cohort |>
+  addDaysExposed(conceptSet = codes, gapEra = 1L) |>
+  glimpse()
 
 ## -----------------------------------------------------------------------------
 cdm$acetaminophen_cohort <- cdm$acetaminophen_cohort |>
@@ -292,7 +434,7 @@ x |>
   ggplot2::lims(y = c(0.8, 1.2)) +
   ggplot2::geom_point(
     ggplot2::aes(x = as.Date("2010-01-01"), y = 1),
-    shape = 23, color = "#00AF6A", size = 5, fill = "#00AF6A"
+    shape = 23, color = "#00AF6A", size = 3, fill = "#00AF6A"
   ) +
   ggplot2::geom_text(
     ggplot2::aes(x = as.Date("2010-01-01"), y = 0.92, label = "Start observation", hjust = "left"),

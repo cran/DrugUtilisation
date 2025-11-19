@@ -6,13 +6,17 @@ knitr::opts_chunk$set(
 
 ## ----setup, message = FALSE, warning = FALSE----------------------------------
 library(DrugUtilisation)
+library(dplyr, warn.conflicts = FALSE)
+library(CodelistGenerator)
+library(PatientProfiles)
 
-cdm <- mockDrugUtilisation(numberIndividual = 200)
+cdm <- mockDrugUtilisation(numberIndividual = 200, source = "duckdb")
+
 cdm$cohort1 |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----message = FALSE, warning = FALSE-----------------------------------------
-drugConcepts <- CodelistGenerator::getDrugIngredientCodes(cdm = cdm, name = c("acetaminophen", "simvastatin"))
+drugConcepts <- getDrugIngredientCodes(cdm = cdm, name = c("acetaminophen", "simvastatin"))
 
 ## ----message = FALSE, warning = FALSE-----------------------------------------
 cohort <- addNumberExposures(
@@ -26,7 +30,7 @@ cohort <- addNumberExposures(
 )
 
 cohort |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----message = FALSE, warning = FALSE-----------------------------------------
 cohort <- addNumberEras(
@@ -41,35 +45,35 @@ cohort <- addNumberEras(
 )
 
 cohort |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  addDrugUtilisation(
-#    cohort,
-#    indexDate = "cohort_start_date",
-#    censorDate = "cohort_end_date",
-#    ingredientConceptId = NULL,
-#    conceptSet = NULL,
-#    restrictIncident = TRUE,
-#    gapEra = 1,
-#    numberExposures = TRUE,
-#    numberEras = TRUE,
-#    daysExposed = TRUE,
-#    daysPrescribed = TRUE,
-#    timeToExposure = TRUE,
-#    initialExposureDuration = TRUE,
-#    initialQuantity = TRUE,
-#    cumulativeQuantity = TRUE,
-#    initialDailyDose = TRUE,
-#    cumulativeDose = TRUE,
-#    nameStyle = "{value}_{concept_name}_{ingredient}",
-#    name = NULL
-#  )
+# addDrugUtilisation(
+#   cohort,
+#   indexDate = "cohort_start_date",
+#   censorDate = "cohort_end_date",
+#   ingredientConceptId = NULL,
+#   conceptSet = NULL,
+#   restrictIncident = TRUE,
+#   gapEra = 1,
+#   numberExposures = TRUE,
+#   numberEras = TRUE,
+#   daysExposed = TRUE,
+#   daysPrescribed = TRUE,
+#   timeToExposure = TRUE,
+#   initialExposureDuration = TRUE,
+#   initialQuantity = TRUE,
+#   cumulativeQuantity = TRUE,
+#   initialDailyDose = TRUE,
+#   cumulativeDose = TRUE,
+#   nameStyle = "{value}_{concept_name}_{ingredient}",
+#   name = NULL
+# )
 
 ## ----eval = TRUE--------------------------------------------------------------
 cdm$drug_utilisation_example <- cdm$cohort1 |>
   # add end of current observation date with the package PatientProfiels
-  PatientProfiles::addFutureObservation(futureObservationType = "date") |>
+  addFutureObservation(futureObservationType = "date") |>
   # add the targeted drug utilisation measures
   addDrugUtilisation(
     indexDate = "cohort_end_date",
@@ -93,7 +97,7 @@ cdm$drug_utilisation_example <- cdm$cohort1 |>
   )
 
 cdm$drug_utilisation_example |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----eval = TRUE--------------------------------------------------------------
 duResults <- summariseDrugUtilisation(
@@ -122,12 +126,12 @@ duResults <- summariseDrugUtilisation(
 )
 
 duResults |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----eval = TRUE--------------------------------------------------------------
 duResults <- cdm$cohort1 |>
   # add age and sex
-  PatientProfiles::addDemographics(
+  addDemographics(
     age = TRUE,
     ageGroup = list("<=50" = c(0, 50), ">50" = c(51, 150)),
     sex = TRUE,
@@ -157,7 +161,7 @@ duResults <- cdm$cohort1 |>
   )
 
 duResults |>
-  dplyr::glimpse()
+  glimpse()
 
 ## ----eval = TRUE--------------------------------------------------------------
 tableDrugUtilisation(duResults)
